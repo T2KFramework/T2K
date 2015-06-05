@@ -24,15 +24,16 @@
 	<groupId>de.dwslab.T2K</groupId>
 	<artifactId>matching.dbpedia</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>pom</packaging>
-
+	<packaging>jar</packaging>
+<!-- currently not working?-->
+	<!--
 	<modules>
 		<module>../de.dwslab.T2K.index</module>
 		<module>../de.dwslab.T2K.matching</module>
 		<module>../de.dwslab.T2K.utils</module>
 		<module>../de.dwslab.T2K.TableProcessor</module>
 	</modules>
-
+-->
 	<name>matching.dbpedia</name>
 	<url>http://maven.apache.org</url>
 	<build>
