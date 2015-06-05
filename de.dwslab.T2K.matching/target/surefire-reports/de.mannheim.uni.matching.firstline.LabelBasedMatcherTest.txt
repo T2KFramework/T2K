@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: de.mannheim.uni.matching.firstline.LabelBasedMatcherTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.018 sec

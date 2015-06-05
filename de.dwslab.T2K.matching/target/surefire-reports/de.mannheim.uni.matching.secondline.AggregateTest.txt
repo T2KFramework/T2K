@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: de.mannheim.uni.matching.secondline.AggregateTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.353 sec
