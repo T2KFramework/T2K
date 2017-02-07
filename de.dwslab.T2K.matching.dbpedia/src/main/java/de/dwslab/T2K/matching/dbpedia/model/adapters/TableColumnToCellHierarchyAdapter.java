@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,15 +15,14 @@
  */
 package de.dwslab.T2K.matching.dbpedia.model.adapters;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import de.dwslab.T2K.matching.MatchingHierarchyAdapater;
 import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.matching.dbpedia.model.TableCellCache;
 import de.dwslab.T2K.matching.dbpedia.model.TableColumnCache;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class TableColumnToCellHierarchyAdapter extends MatchingHierarchyAdapater<TableColumn, TableCell> {
 

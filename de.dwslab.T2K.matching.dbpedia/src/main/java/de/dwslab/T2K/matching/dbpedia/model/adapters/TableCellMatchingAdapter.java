@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +15,12 @@
  */
 package de.dwslab.T2K.matching.dbpedia.model.adapters;
 
-import java.util.Collection;
-import java.util.List;
-
 import de.dwslab.T2K.matching.MatchingAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.utils.query.Func;
 import de.dwslab.T2K.utils.query.Q;
+import java.util.Collection;
+import java.util.List;
 
 public class TableCellMatchingAdapter extends MatchingAdapter<TableCell> {
 
@@ -59,4 +57,9 @@ public class TableCellMatchingAdapter extends MatchingAdapter<TableCell> {
 	        return super.getLabels(instance);
 	    }
 	}
+
+    @Override
+    public Object getTokens(TableCell instance) {
+        return null;
+    }
 }

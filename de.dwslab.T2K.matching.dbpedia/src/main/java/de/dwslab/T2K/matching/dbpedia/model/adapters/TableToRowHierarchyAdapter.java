@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +15,12 @@
  */
 package de.dwslab.T2K.matching.dbpedia.model.adapters;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import de.dwslab.T2K.matching.MatchingHierarchyAdapater;
 import de.dwslab.T2K.matching.dbpedia.model.TableRow;
 import de.dwslab.T2K.matching.dbpedia.model.TableRowCache;
 import de.dwslab.T2K.tableprocessor.model.Table;
+import java.util.Collection;
+import java.util.HashSet;
 
 public class TableToRowHierarchyAdapter extends
         MatchingHierarchyAdapater<Table, TableRow> {
@@ -45,8 +43,13 @@ public class TableToRowHierarchyAdapter extends
                         
                         //for (int i = 0; i < numRows; i++) {
                         for(Integer i : instance.getKey().getValues().keySet()) {
-                            TableRow row = new TableRow(instance, i,instance.getNumHeaderRows()+i);
-                            
+                            TableRow row;
+                            if(instance.getKey().getValues().keySet().contains(0) && instance.getNumHeaderRows()>0) {
+                                row = new TableRow(instance, i,instance.getNumHeaderRows()+i); 
+                            }
+                            else {
+                                row = new TableRow(instance, i,i);
+                            }   
                             rows.add(row);
                         }
                         

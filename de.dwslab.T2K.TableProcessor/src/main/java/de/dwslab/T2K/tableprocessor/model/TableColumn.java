@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,6 +19,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Represents a column of a Table. Holds the references to all the values of the column.
@@ -50,6 +51,20 @@ public class TableColumn
         this.columnStatistic = columnStatistic;
     }
 
+    /**
+     * @return the headerList
+     */
+    public List getHeaderList() {
+        return headerList;
+    }
+
+    /**
+     * @param headerList the headerList to set
+     */
+    public void setHeaderList(List headerList) {
+        this.headerList = headerList;
+    }
+
     public static enum ColumnDataType {
         numeric, string, coordinate, date, link, bool, unknown, unit, list
     };
@@ -65,6 +80,7 @@ public class TableColumn
     private boolean isKey;
     private int numRows;
     private Statistic columnStatistic;
+    private transient List<String> headerList = new ArrayList<>();
     
     /*
      * Column values
@@ -95,12 +111,12 @@ public class TableColumn
         this.isKey = isKey;
     }
 
-    public String getHeader() {
+    public Object getHeader() {
         return header;
     }
 
-    public void setHeader(String header) {
-        this.header = header;
+    public void setHeader(Object header) {
+        this.header = header.toString();
     }
 
     public String getURI() {
@@ -156,10 +172,15 @@ public class TableColumn
 //        rank = rank - ((double) ((double) numberOfNullValues / (double) totalValues));
 //
 //        return rank;
-        double rank1 = (double)uniqueValues / (double)numRows;
-        int numNulls = numRows - totalValues;
-        double rank2 = (double)numNulls / (double)numRows;
         
+        //the whole time it was like this:
+//        double rank1 = (double)uniqueValues / (double)numRows;
+//        int numNulls = numRows - totalValues;
+//        double rank2 = (double)numNulls / (double)numRows;
+        
+        double rank1 = (double)uniqueValues / (double)getTable().getTotalNumOfRows();
+        int numNulls = getTable().getTotalNumOfRows() - totalValues;
+        double rank2 = (double)numNulls / (double)getTable().getTotalNumOfRows();        
         return rank1 - rank2;
     }
 
@@ -176,11 +197,22 @@ public class TableColumn
     
     @Override
     public String toString() {
-        return header;
+        return header.toString();
     }
 
     @Override
     public int compareTo(TableColumn o) {
+//        int comp = getTable().getHeader().compareTo(o.getTable().getHeader());
+//        
+//        if(comp==0) {
+//            comp = Integer.compare(getTable().getColumns().indexOf(this), o.getTable().getColumns().indexOf(o));
+//            
+//            if(comp==0 && getURI()!=null && o.getURI()!=null) {
+//                comp = getURI().compareTo(o.getURI());
+//            }
+//        }
+//        
+//        return comp;
         String me = getTable().getHeader() + getTable().getColumns().indexOf(this) + getURI()+ "";
         String other = o.getTable().getHeader() + o.getTable().getColumns().indexOf(o) + o.getURI()+  "";
         return me.compareTo(other);

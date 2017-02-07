@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,12 +32,21 @@ public class Table implements Serializable, Comparable<Table> {
     private String header;
     public int nmNulls;
     private int numHeaderRows;
+    private transient int totalNumOfRows;
+    private transient TableColumn keyColumn;
+    private transient int keyIndex = -1;
+    
+    private transient String contextTimestamp;
+    private transient String contextBeforeTable;
+    private transient String contextAfterTable;
+    private transient String pageTitle;
+    private transient String tableTitle;
 
     @Override
     public int hashCode() {
         return fullPath.hashCode();
     }
-    
+
     public int getNmNulls() {
         return nmNulls;
     }
@@ -108,11 +116,32 @@ public class Table implements Serializable, Comparable<Table> {
         this.header = header;
     }
 
+    public String getContextAfterTable() {
+        return contextAfterTable;
+    }
+    public void setContextAfterTable(String contextAfterTable) {
+        this.contextAfterTable = contextAfterTable;
+    }
+    
+    public String getContextBeforeTable() {
+        return contextBeforeTable;
+    }
+    public void setContextBeforeTable(String contextBeforeTable) {
+        this.contextBeforeTable = contextBeforeTable;
+    }
+    
+    public String getContextTimestamp() {
+        return contextTimestamp;
+    }
+    public void setContextTimestamp(String contextTimestamp) {
+        this.contextTimestamp = contextTimestamp;
+    }
+    
     public Table() {
         columns = new LinkedList<>();
         header = "";
         hasKey = true;
-        nmNulls = 0;
+        nmNulls = 0;        
     }
 
     public boolean isHasKey() {
@@ -121,61 +150,67 @@ public class Table implements Serializable, Comparable<Table> {
 
     public StringBuilder printHeader() {
         StringBuilder sb = new StringBuilder();
-        for(TableColumn c : getColumns()) {
-            sb.append(padString(c.getHeader(), 30));
+        for (TableColumn c : getColumns()) {
+            sb.append(padString(c.getHeader().toString(), 30));
             sb.append(" | ");
         }
         sb.append("\n");
         return sb;
     }
-    
+
     public StringBuilder printTypes() {
         StringBuilder sb = new StringBuilder();
-        for(TableColumn c : getColumns()) {
+        for (TableColumn c : getColumns()) {
             sb.append(padString(c.getDataType().toString(), 30));
             sb.append(" | ");
         }
         sb.append("\n");
         return sb;
     }
-    
+
     public StringBuilder printRow(int row) {
         StringBuilder sb = new StringBuilder();
-        for(TableColumn c : getColumns()) {
+        for (TableColumn c : getColumns()) {
             String value = "";
-            
-            if(c.getValues().get(row)!=null) {
+
+            if (c.getValues().get(row) != null) {
                 value = c.getValues().get(row).toString();
             }
-            
+
             sb.append(padString(value, 30));
             sb.append(" | ");
         }
         sb.append("\n");
         return sb;
     }
-    
+
     public String printTable() {
         StringBuilder sb = new StringBuilder();
-        
+
 //        for(TableColumn c : getColumns()) {
 //            sb.append(padString(c.getHeader(), 30));
 //            sb.append(" | ");
 //        }
 //        sb.append("\n");
         sb.append(printHeader());
-        
+
 //        for(TableColumn c : getColumns()) {
 //            sb.append(padString(c.getDataType().toString(), 30));
 //            sb.append(" | ");
 //        }
 //        sb.append("\n");
         sb.append(printTypes());
-        
-        if(getKey() == null || getKey().getValues() == null) {
-            return sb.toString();
+
+        for(TableColumn tc : getColumns()) {
+            sb.append("---------------------------------");
         }
-        for(int row : getKey().getValues().keySet()) {
+        sb.append("\n");
+        
+//        if (!isHasKey() || getKey().getValues() == null) {
+//            return sb.toString();
+//        }
+        //for (int row : getKey().getValues().keySet()) {
+        for(int row = 0; row < getTotalNumOfRows(); row++) {
 //            for(TableColumn c : getColumns()) {
 //                String value = "";
 //                
@@ -189,7 +224,7 @@ public class Table implements Serializable, Comparable<Table> {
 //            sb.append("\n");
             sb.append(printRow(row));
         }
-        
+
         return sb.toString();
     }
 
@@ -201,28 +236,54 @@ public class Table implements Serializable, Comparable<Table> {
     }
 
     public TableColumn getKey() {
-        for (TableColumn c : columns) {
-            if (c.isKey()) {
-                return c;
+        if (!hasKey) {
+            return null;
+        } else if (keyColumn != null) {
+            return keyColumn;
+        } else {
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns.get(i).isKey()) {
+                    keyIndex = i;
+                    keyColumn = columns.get(i);
+                    return keyColumn;
+                }
             }
         }
         return null;
     }
+    
+    public void setKey(TableColumn d, Integer i) {
+        System.out.println("set key to : " +i);
+        this.keyColumn = d;
+        this.keyIndex = i;
+    }
 
     public int getKeyIndex() {
-        for (int i = 0; i < columns.size(); i++) {
-            if (columns.get(i).isKey()) {
-                return i;
+        if (!hasKey) {
+            return -1;
+        } else if (keyIndex > -1) {
+            return keyIndex;
+        } else {
+            for (int i = 0; i < columns.size(); i++) {
+                if (columns.get(i).isKey()) {
+                    keyIndex = i;
+                    keyColumn = columns.get(i);
+                    return i;
+                }
             }
         }
         return -1;
     }
-        
+
     @Override
     public String toString() {
         return getHeader();
     }
 
+//    @Override
+//    public int compareTo(Table o) {
+//        return Integer.compare(hashCode, o.hashCode);
+//    }
     @Override
     public int compareTo(Table o) {
         return getHeader().compareTo(o.getHeader());
@@ -240,5 +301,47 @@ public class Table implements Serializable, Comparable<Table> {
      */
     public void setNumHeaderRows(int numHeaderRows) {
         this.numHeaderRows = numHeaderRows;
+    }
+
+    /**
+     * @return the totalNumOfRows
+     */
+    public int getTotalNumOfRows() {
+        return totalNumOfRows;
+    }
+
+    /**
+     * @param totalNumOfRows the totalNumOfRows to set
+     */
+    public void setTotalNumOfRows(int totalNumOfRows) {
+        this.totalNumOfRows = totalNumOfRows;
+    }
+
+    /**
+     * @return the pageTitle
+     */
+    public String getPageTitle() {
+        return pageTitle;
+    }
+
+    /**
+     * @param pageTitle the pageTitle to set
+     */
+    public void setPageTitle(String pageTitle) {
+        this.pageTitle = pageTitle;
+    }
+
+    /**
+     * @return the tableTitle
+     */
+    public String getTableTitle() {
+        return tableTitle;
+    }
+
+    /**
+     * @param tableTitle the tableTitle to set
+     */
+    public void setTableTitle(String tableTitle) {
+        this.tableTitle = tableTitle;
     }
 }

@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,13 +15,11 @@
  */
 package de.dwslab.T2K.matching.dbpedia.model;
 
+import de.dwslab.T2K.tableprocessor.model.Table;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
-import de.dwslab.T2K.tableprocessor.model.Table;
 
 public class TableRow implements Comparable<TableRow> {
 
@@ -58,7 +55,11 @@ public class TableRow implements Comparable<TableRow> {
     }
 
     public Object getKey() {
-        return getTable().getKey().getValues().get(getRowIndex());
+        if(getTable().getKey()!=null) {
+            return getTable().getKey().getValues().get(getRowIndex());
+        } else {
+            return null;
+        }
     }
 
     public TableCell getKeyCell() {
@@ -118,15 +119,23 @@ public class TableRow implements Comparable<TableRow> {
 
     @Override
     public String toString() {
-        return "" + getKey();
+        return String.format("[%d] %s", getRowIndex(), getKey());
     }
 
     public Object getURI() {
         return getTable().getColumns().get(0).getValues().get(getRowIndex());
     }
 
+    @Override
     public int compareTo(TableRow o) {
         
+//        int comp = getTable().getHeader().compareTo(o.getTable().getHeader());
+//        
+//        if(comp==0) {
+//            comp = Integer.compare(rowIndex, o.getRowIndex());
+//        }
+//        
+//        return comp;
         String me = getTable().getHeader() + getKey() + "";
         String other = o.getTable().getHeader() + o.getKey() + "";
         

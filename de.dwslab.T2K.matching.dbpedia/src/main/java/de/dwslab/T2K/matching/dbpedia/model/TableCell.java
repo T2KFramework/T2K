@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,9 +15,8 @@
  */
 package de.dwslab.T2K.matching.dbpedia.model;
 
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import de.dwslab.T2K.tableprocessor.model.Table;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class TableCell implements Comparable<TableCell> {
 
@@ -26,6 +24,9 @@ public class TableCell implements Comparable<TableCell> {
     private int rowIndex;
     private int columnIndex;
     private int hashCode;
+    
+    private Object value;
+    private Object type;
 
     public Table getTable() {
         return table;
@@ -57,15 +58,21 @@ public class TableCell implements Comparable<TableCell> {
         setColumnIndex(column);
         hashCode = new HashCodeBuilder().append(getTable().hashCode())
                 .append(getRowIndex()).append(getColumnIndex()).toHashCode();
+        
+        value = getTable().getColumns().get(getColumnIndex()).getValues()
+                .get(getRowIndex());
+        type = getTable().getColumns().get(getColumnIndex()).getDataType();
     }
 
     public Object getValue() {
-        return getTable().getColumns().get(getColumnIndex()).getValues()
-                .get(getRowIndex());
+//        return getTable().getColumns().get(getColumnIndex()).getValues()
+//                .get(getRowIndex());
+        return value;
     }
 
     public Object getType() {
-        return getTable().getColumns().get(getColumnIndex()).getDataType();
+        //return getTable().getColumns().get(getColumnIndex()).getDataType();
+        return type;
     }
 
     @Override
@@ -91,6 +98,18 @@ public class TableCell implements Comparable<TableCell> {
         if(o==null) {
             return -1;
         }
+        
+//        int comp = getTable().getHeader().compareTo(o.getTable().getHeader());
+//        
+//        if(comp==0) {
+//            comp = Integer.compare(getColumnIndex(),o.getColumnIndex());
+//            
+//            if(comp==0) {
+//                comp = Integer.compare(getRowIndex(), o.getRowIndex());
+//            }
+//        }
+//        
+//        return comp;
         
         String me = String.format("%s.%s.%s", getTable().getHeader(), getColumnIndex(), getRowIndex());
         String other = String.format("%s.%s.%s", o.getTable().getHeader(), o.getColumnIndex(), o.getRowIndex());

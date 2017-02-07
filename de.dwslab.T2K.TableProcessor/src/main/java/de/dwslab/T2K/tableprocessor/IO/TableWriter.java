@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,7 +35,7 @@ public class TableWriter {
         // write headers
         int numRows = 0;
         for(TableColumn c : t.getColumns()) {
-            values.add(c.getHeader());
+            values.add(c.getHeader().toString());
             numRows = Math.max(numRows, c.getValues().size());
         }
         w.writeNext(values.toArray(new String[values.size()]));

@@ -26,7 +26,6 @@ import de.dwslab.T2K.matching.firstline.LabelBasedMatcher;
 import de.dwslab.T2K.matching.firstline.LabelBasedMatcherWithFiltering;
 import de.dwslab.T2K.matching.similarity.signatures.JaccardPrefixFiltering;
 import de.dwslab.T2K.matching.similarity.signatures.PrefixFiltering;
-import de.dwslab.T2K.similarity.functions.SimilarityFunction;
 import de.dwslab.T2K.similarity.functions.set.MaxSimilarity;
 import de.dwslab.T2K.similarity.functions.string.JaccardSimilarity;
 import de.dwslab.T2K.similarity.functions.string.SimpleJaccardSimilarity;

@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,23 +16,22 @@
 package de.dwslab.T2K.matching.dbpedia.matchers.instance;
 
 import de.dwslab.T2K.matching.Matcher;
+import de.dwslab.T2K.matching.dbpedia.algorithm.PartialMatcher;
 import de.dwslab.T2K.matching.dbpedia.logging.MatchingLogger;
-import de.dwslab.T2K.matching.dbpedia.matchers.PartialMatcher;
+import de.dwslab.T2K.matching.dbpedia.model.GoldStandard;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingData;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingParameters;
+import de.dwslab.T2K.matching.dbpedia.model.Similarities;
 import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.matching.dbpedia.model.TableRow;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableColumnToCellHierarchyAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableRowToCellHierarchyAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableRowUriMatchingAdapter;
-import de.dwslab.T2K.matching.dbpedia.model.settings.GoldStandard;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingData;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingParameters;
-import de.dwslab.T2K.matching.dbpedia.model.settings.Similarities;
 import de.dwslab.T2K.matching.secondline.Aggregate;
 import de.dwslab.T2K.matching.secondline.AggregationType;
 import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
 import de.dwslab.T2K.utils.timer.Timer;
-
 /**
  * Matcher for instances that uses existing similarity matrices and applies pruning in the end
  * @author Oliver
@@ -124,10 +122,6 @@ public class PruningInstanceMatcher extends PartialMatcher<TableRow> {
         
 //        candSim.prune(getMatchingParameters().getInstanceScoreThreshold());
         candSim.prune(getSimilarityThreshold());
-
-        //TODO we could try a 1:1 mapping here ...
-
-        //getSimilarities().setCandidateSimilarity(candSim);
         
         if (getMatchingParameters().isCollectMatchingInfo()) {
             System.out.println(candSim.getOutput(null, getGoldStandard().getInstanceGoldStandard().values(), new TableRowUriMatchingAdapter(), null));

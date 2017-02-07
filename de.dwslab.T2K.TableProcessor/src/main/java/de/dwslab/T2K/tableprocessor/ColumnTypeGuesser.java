@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -23,8 +22,8 @@ import de.dwslab.T2K.tableprocessor.IO.parsers.GeoCoordinateParser;
 import de.dwslab.T2K.tableprocessor.IO.parsers.NumericParser;
 import de.dwslab.T2K.tableprocessor.IO.parsers.URLParser;
 import de.dwslab.T2K.tableprocessor.model.TableColumn.ColumnDataType;
-import de.dwslab.T2K.units.UnitParserDomi;
-import de.dwslab.T2K.units.Unit_domi;
+import de.dwslab.T2K.units.UnitParser;
+import de.dwslab.T2K.units.Unit;
 import de.dwslab.T2K.util.Variables;
 
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class ColumnTypeGuesser {
      * @param unit the returning unit (if found)
      * @return
      */
-    public ColumnType guessTypeForValue(String columnValue, Unit_domi headerUnit) {
+    public ColumnType guessTypeForValue(String columnValue, Unit headerUnit) {
         if (checkIfList(columnValue)) {
             List<String> columnValues;
 //            columnValue = columnValue.replace("{", "");
@@ -59,7 +58,7 @@ public class ColumnTypeGuesser {
             columnValue = listCharactersPattern.matcher(columnValue).replaceAll("");
             columnValues = Arrays.asList(columnValue.split("\\|"));
             Map<ColumnDataType, Integer> countTypes = new HashMap<>();
-            Map<Unit_domi, Integer> countUnits = new HashMap<>();
+            Map<Unit, Integer> countUnits = new HashMap<>();
             for(String singleValue : columnValues) {
                 ColumnType guessedSingleType = guessTypeForSingleValue(singleValue, headerUnit);
                 
@@ -96,8 +95,8 @@ public class ColumnTypeGuesser {
                 }
             }
             max = 0;
-            Unit_domi finalUnit = null;
-            for(Unit_domi type : countUnits.keySet()) {
+            Unit finalUnit = null;
+            for(Unit type : countUnits.keySet()) {
                 if(countUnits.get(type)>max) {
                     max = countUnits.get(type);
                     finalUnit = type;
@@ -120,7 +119,7 @@ public class ColumnTypeGuesser {
         return false;
     }
     
-    private ColumnType guessTypeForSingleValue(String columnValue, Unit_domi headerUnit) {
+    private ColumnType guessTypeForSingleValue(String columnValue, Unit headerUnit) {
         // check the length
         boolean validLenght = true;
         if (columnValue.length() > 50) {
@@ -134,7 +133,7 @@ public class ColumnTypeGuesser {
         }
         if (validLenght && GeoCoordinateParser.parseGeoCoordinate(columnValue)) {
             return new ColumnType(ColumnDataType.coordinate,null);
-        }
+        }        
         if (validLenght) {
             try {
                 Date date = DateUtil.parse(columnValue);
@@ -146,9 +145,9 @@ public class ColumnTypeGuesser {
         }
         if (validLenght && NumericParser.parseNumeric(columnValue)) {        
             if(Variables.useUnitDetection) {
-                Unit_domi unit = headerUnit;
+                Unit unit = headerUnit;
                 if(headerUnit==null) {
-                    unit = UnitParserDomi.checkUnit(columnValue);
+                    unit = UnitParser.checkUnit(columnValue);
                 }
                 return new ColumnType(ColumnDataType.unit,unit);
             }

@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,26 +15,25 @@
  */
 package de.dwslab.T2K.index.dbpedia;
 
+import de.dwslab.T2K.index.IIndex;
+import de.dwslab.T2K.index.management.IndexManagerBase;
+import de.dwslab.T2K.normalisation.StringNormalizer;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParserBase;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.BooleanClause.Occur;
 
-import de.dwslab.T2K.index.IIndex;
-import de.dwslab.T2K.index.io.StringNormaliser;
-import de.dwslab.T2K.index.management.IndexManagerBase;
 
 public class DBPediaInstanceIndex extends IndexManagerBase {
 
@@ -59,7 +57,7 @@ public class DBPediaInstanceIndex extends IndexManagerBase {
         this.removeBrackets = removeBrackets;
     }
 	
-	   public List<DBpediaIndexEntry> searchMany(Collection<?> labels) {
+	   public List<DBpediaIndexEntry> searchMany(Collection labels) {
 	        long start, setup=0, search=0, result=0;
 	        start = System.currentTimeMillis();
 	        List<DBpediaIndexEntry> results = new LinkedList<DBpediaIndexEntry>();
@@ -82,7 +80,7 @@ public class DBPediaInstanceIndex extends IndexManagerBase {
     	                
     	                //String[] tokens = value.split("\\s+");
     	                
-    	                List<String> tokens = StringNormaliser.tokenise(value, isRemoveBrackets());
+    	                List<String> tokens = StringNormalizer.tokenise(value, isRemoveBrackets());
     	                
     	                StringBuilder sb = new StringBuilder();
     	                
@@ -158,9 +156,11 @@ public class DBPediaInstanceIndex extends IndexManagerBase {
 	                        results.add(e);
 	                    }
 	                }
-	            } else if(isVerbose()) {
-                    System.out.println(String.format("Empty query for '%s'", labels));
-                }
+	            } else {
+	                if(isVerbose()) {
+	                    System.out.println(String.format("Empty query for '%s'", labels));
+	                }
+	            }
 	            
 	            result = System.currentTimeMillis() - start;
 
@@ -197,7 +197,7 @@ public class DBPediaInstanceIndex extends IndexManagerBase {
 			    //String[] tokens = value.split("\\s+");
 			    
 			    //List<String> tokens = StringNormaliser.tokenise(value, isRemoveBrackets());
-			    List<String> tokens = StringNormaliser.tokenise(value, true);
+			    List<String> tokens = StringNormalizer.tokenise(value, true);
 			    
 			    StringBuilder sb = new StringBuilder();
 			    

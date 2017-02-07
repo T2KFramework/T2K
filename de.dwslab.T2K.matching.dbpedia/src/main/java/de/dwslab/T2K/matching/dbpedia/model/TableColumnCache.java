@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +15,11 @@
  */
 package de.dwslab.T2K.matching.dbpedia.model;
 
+import de.dwslab.T2K.tableprocessor.model.Table;
+import de.dwslab.T2K.tableprocessor.model.TableColumn;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import de.dwslab.T2K.tableprocessor.model.TableColumn;
 
 public class TableColumnCache {
 
@@ -49,4 +47,9 @@ public class TableColumnCache {
         return cache.get(column);
     }
     
+    public void removeTable(Table t) {
+        for(TableColumn tc : t.getColumns()) {
+            cache.remove(tc);
+        }
+    }
 }

@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,13 +21,15 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import au.com.bytecode.opencsv.CSVReader;
+import de.dwslab.T2K.normalisation.StringNormalizer;
 import de.dwslab.T2K.tableprocessor.ColumnType;
 import de.dwslab.T2K.tableprocessor.ColumnTypeGuesser;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumnBuilder;
+import de.dwslab.T2K.tableprocessor.model.TableMapping;
 import de.dwslab.T2K.tableprocessor.model.TableColumn.ColumnDataType;
-import de.dwslab.T2K.units.UnitParserDomi;
-import de.dwslab.T2K.units.Unit_domi;
+import de.dwslab.T2K.units.UnitParser;
+import de.dwslab.T2K.units.Unit;
 import de.dwslab.T2K.util.Variables;
 import de.dwslab.T2K.utils.concurrent.Consumer;
 import de.dwslab.T2K.utils.concurrent.Parallel;
@@ -43,6 +44,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+
 
 /**
  * @author petar
@@ -109,7 +111,7 @@ public class ConvertFileToTable {
      */
     public Table readLODTable(String path) {
         if (Variables.useUnitDetection) {
-            UnitParserDomi.readInUnits();
+            UnitParser.readInUnits();
         }
         // create new table
         final Table table = new Table();
@@ -128,6 +130,28 @@ public class ConvertFileToTable {
             String fileLine = in.readLine();
             columnNames = fileLine.split(Variables.delimiter);
 
+            // skip annotations
+            boolean isMetaData = columnNames[0].startsWith("#");
+            // if the current line starts with #, check for valid annotations
+            while(isMetaData) {
+                isMetaData = false;
+                
+                // check all valid annotations
+                for(String s : TableMapping.VALID_ANNOTATIONS) {
+                    if(columnNames[0].startsWith(s)) {
+                        isMetaData = true;
+                        break;
+                    }
+                }
+                
+                // if the current line is an annotation, read the next line and start over
+                if(isMetaData) {
+                    fileLine = in.readLine();
+                    columnNames = fileLine.split(Variables.delimiter);
+                    isMetaData = columnNames[0].startsWith("#");
+                }
+            }
+            
             // read the property URIs
             columnURIs = in.readLine().split(Variables.delimiter);
 
@@ -135,7 +159,7 @@ public class ConvertFileToTable {
             fileLine = in.readLine();
             columntypes = fileLine.split(Variables.delimiter);
 
-            final Unit_domi[] columnUnits = new Unit_domi[columnNames.length];
+            final Unit[] columnUnits = new Unit[columnNames.length];
             
             // process all properties (=columns)
             int i = 0;
@@ -156,29 +180,26 @@ public class ConvertFileToTable {
                 String datatype = columntypes[i];
                 switch (datatype) {
                 case "XMLSchema#date":
-                case  "XMLSchema#gYear":
+                case "XMLSchema#gYear":
                     b.setDataType(ColumnDataType.date);
                     break;
                 case "XMLSchema#double":
                 case "XMLSchema#float":
                 case "XMLSchema#nonNegativeInteger":
                 case "XMLSchema#positiveInteger":
+                case "XMLSchema#integer":    
+                case "XMLSchema#negativeInteger": 
                     b.setDataType(ColumnDataType.numeric);
                     break;
                 case "XMLSchema#string":
-                    b.setDataType(ColumnDataType.string);
+                    b.setDataType(ColumnDataType.string);                    
                     break;
 
                 default:                    
                     b.setDataType(ColumnDataType.unknown);
                 }
-//                if (datatype.equals("XMLSchema#date") || datatype.equals("XMLSchema#gYear")) {
-//                    b.setDataType(ColumnDataType.date);
-//                } else {
-//                    b.setDataType(ColumnDataType.unknown);
-//                }
 
-                columnUnits[i] = UnitParserDomi.parseUnitFromHeader(columnName);
+                columnUnits[i] = UnitParser.parseUnitFromHeader(columnName);
                 
                 colBuilders.add(b);
                 // add the column to the table
@@ -210,10 +231,10 @@ public class ConvertFileToTable {
                             
                          // handle the column splitting
                             fileLine = fileLine.substring(1, fileLine.length() - 1);
-                            values = fileLine.split(Variables.delimiter);
-                            
+                            values = fileLine.split(Variables.delimiter);  
                             produce(new Pair<>(row++, values));
                         }
+                        table.setTotalNumOfRows(row);
                     } catch (IOException e) {
                     }
                 }
@@ -226,11 +247,17 @@ public class ConvertFileToTable {
                     // iterate all columns
                     int columnIndex = 0;
                     for (String columnValue : parameter.getSecond()) {
-
-                        TableColumnBuilder b = colBuilders.get(columnIndex);
+                        TableColumnBuilder b = null;
+                        
+                            if(columnIndex>=colBuilders.size()) {
+                                return;
+                            }
+                            else {
+                                b = colBuilders.get(columnIndex);
+                            }
                         ColumnType valueType = new ColumnType(b.getDataType(), null);
 
-                        if (!columnValue.equalsIgnoreCase(Variables.nullValue)) {
+                        if (!columnValue.equalsIgnoreCase(StringNormalizer.nullValue)) {
 
                             // guess the type if not already set
                             boolean list = false;
@@ -349,7 +376,7 @@ public class ConvertFileToTable {
      */
     public Table readWebTable(String tablePath) throws UnsupportedEncodingException, FileNotFoundException, IOException {
         if (Variables.useUnitDetection) {
-            UnitParserDomi.readInUnits();
+            UnitParser.readInUnits();
         }
         // create new table
         final Table table = new Table();
@@ -372,13 +399,34 @@ public class ConvertFileToTable {
 
             // read headers
             String[] columnNames = reader.readNext();
-
+            
             if (columnNames == null) {
                 reader.close();
                 return null;
             }
             
-            final Unit_domi[] columnUnits = new Unit_domi[columnNames.length];
+            // skip annotations
+            boolean isMetaData = columnNames[0].startsWith("#");
+            // if the current line starts with #, check for valid annotations
+            while(isMetaData) {
+                isMetaData = false;
+                
+                // check all valid annotations
+                for(String s : TableMapping.VALID_ANNOTATIONS) {
+                    if(columnNames[0].startsWith(s)) {
+                        isMetaData = true;
+                        break;
+                    }
+                }
+                
+                // if the current line is an annotation, read the next line and start over
+                if(isMetaData) {
+                    columnNames = reader.readNext();
+                    isMetaData = columnNames[0].startsWith("#");
+                }
+            }
+            
+            final Unit[] columnUnits = new Unit[columnNames.length];
 
             //set the header for each column (take the first row!)
             int colIdx = 0;
@@ -388,12 +436,12 @@ public class ConvertFileToTable {
                 // set the header
                 String header = columnName;
                 if (cleanHeader) {
-                    header = StringNormalizer.cleanWebHeader(StringNormalizer.simpleStringNormalization(columnName, false));
+                    header = StringNormalizer.normaliseHeader(columnName);
                 }
                 b.setHeader(header);
 
                 // parse units from headers
-                columnUnits[colIdx++] = UnitParserDomi.parseUnitFromHeader(columnName);
+                columnUnits[colIdx++] = UnitParser.parseUnitFromHeader(columnName);
                 
                 colBuilders.add(b);
                 table.getColumns().add(b.getColumn());
@@ -418,6 +466,7 @@ public class ConvertFileToTable {
 //                            }
 //                            System.out.println();
                         }
+                        table.setTotalNumOfRows(row);
                     } catch (IOException e) {
                     }
                 }
@@ -503,7 +552,7 @@ public class ConvertFileToTable {
     protected String normaliseValue(String value) {
         //String columnValueNormalized = StringNormalizer.simpleStringNormalization(value, true);
         //String columnValueNormalized = StringNormalizer.simpleStringNormalization(value, false);
-        String columnValueNormalized = StringNormalizer.webStringNormalization(value);
+        String columnValueNormalized = StringNormalizer.normaliseValue(value,false);
         return columnValueNormalized;
     }
 

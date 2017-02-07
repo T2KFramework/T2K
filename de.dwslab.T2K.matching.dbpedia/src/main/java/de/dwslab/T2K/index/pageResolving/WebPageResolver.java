@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.dwslab.T2K.index.pageResolving;
 
 import de.dwslab.T2K.index.io.DefaultIndex;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
-
 import org.apache.lucene.index.IndexWriter;
 
 /**
@@ -43,11 +36,48 @@ import org.apache.lucene.index.IndexWriter;
 public class WebPageResolver {
 
     public static void main(String[] args) throws FileNotFoundException, IOException, ClassNotFoundException {
-        DefaultIndex idx = new DefaultIndex(args[0]);
+        BufferedReader readFiles = new BufferedReader(new FileReader(new File(args[0])));
         InputStream in = new GZIPInputStream(new FileInputStream(new File(args[1])));
+        BufferedReader read = new BufferedReader(new InputStreamReader(in));
+        Map<String, String> idToURI = new HashMap();
+        String line = read.readLine();
+        long cnt = 0;
+        while (line != null) {
+            String content[];
+            content = line.split("\"\\|");
+            if (content.length > 5) {
+                try {
+                    idToURI.put(content[5].replace("\"", ""),content[0].replace("\"", ""));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(line);
+                }
+            }
+            cnt++;
+            if (cnt % 100000 == 0) {
+                System.out.println("Indexed " + cnt + " items." + " id: " + content[5].replace("\"", "") + " uri " + content[0].replace("\"", ""));
+            }
+            line = read.readLine();
+        }
+        line = readFiles.readLine();
+        while(line!=null) {
+            for(String s : idToURI.keySet()) {
+                if(s.contains(line)) {
+                    System.out.println(line+"\t"+idToURI.get(s));
+                }
+            }            
+            line = readFiles.readLine();
+        }
+        
+        //index(args[0],args[1]);
+    }
+
+    private static void index(String args0, String args1) throws IOException {
+        DefaultIndex idx = new DefaultIndex(args0);
+        InputStream in = new GZIPInputStream(new FileInputStream(new File(args1)));
         //boolean smallFile = Boolean.parseBoolean(args[2]);
         BufferedReader read = new BufferedReader(new InputStreamReader(in));
-        Map<String, String> idToURI = new HashMap<>();
+        Map<String, String> idToURI = new HashMap();
         String line = read.readLine();
         long cnt = 0;
         while (line != null) {
@@ -57,15 +87,15 @@ public class WebPageResolver {
 //                System.out.println(content[0].replace(".csv", "") + " --- "+ content[1]);
 //                idToURI.put(content[0].replace(".csv", ""), content[1]);
 //            } else {
-                content = line.split("\"\\|");
-                if (content.length > 5) {
-                    try {
-                        idToURI.put(content[5].replace("\"", "").replace("/", "__").replace(".arc.gz", "arc").replace(".csv", ""), content[0].replace("\"", ""));
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        System.out.println(line);
-                    }
+            content = line.split("\"\\|");
+            if (content.length > 5) {
+                try {
+                    idToURI.put(content[5].replace("\"", "").replace("/", "__").replace(".arc.gz", "arc").replace(".csv", ""), content[0].replace("\"", ""));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    System.out.println(line);
                 }
+            }
 //            }
             cnt++;
             if (cnt % 100000 == 0) {
@@ -73,7 +103,6 @@ public class WebPageResolver {
             }
             line = read.readLine();
         }
-        read.close();
 
         IndexWriter writer = idx.getIndexWriter();
 
@@ -94,5 +123,4 @@ public class WebPageResolver {
 
         System.out.println("done.");
     }
-
 }

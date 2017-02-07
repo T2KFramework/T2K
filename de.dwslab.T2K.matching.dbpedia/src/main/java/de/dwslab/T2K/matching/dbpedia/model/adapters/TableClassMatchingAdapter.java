@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,6 +18,7 @@ package de.dwslab.T2K.matching.dbpedia.model.adapters;
 import de.dwslab.T2K.matching.MatchingAdapter;
 import de.dwslab.T2K.tableprocessor.model.Table;
 
+
 public class TableClassMatchingAdapter extends MatchingAdapter<Table> {
 
 	@Override
@@ -31,5 +31,10 @@ public class TableClassMatchingAdapter extends MatchingAdapter<Table> {
 		// intentionally returns null as tables represent types and have no types by themselves
 		return null;
 	}
+
+    @Override
+    public Object getTokens(Table instance) {
+        return null;
+    }
 
 }

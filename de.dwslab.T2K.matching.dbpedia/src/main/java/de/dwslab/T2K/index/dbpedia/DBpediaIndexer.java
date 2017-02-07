@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,25 +15,22 @@
  */
 package de.dwslab.T2K.index.dbpedia;
 
+import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
+import de.dwslab.T2K.index.IIndex;
+import de.dwslab.T2K.index.io.DefaultIndex;
+import de.dwslab.T2K.normalisation.StringNormalizer;
+import de.dwslab.T2K.tableprocessor.IO.TableReader;
+import de.dwslab.T2K.tableprocessor.model.Table;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import org.apache.lucene.index.IndexWriter;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
-import com.esotericsoftware.kryo.io.Output;
-
-import de.dwslab.T2K.index.IIndex;
-import de.dwslab.T2K.index.io.DefaultIndex;
-import de.dwslab.T2K.index.io.StringNormaliser;
-import de.dwslab.T2K.tableprocessor.IO.TableReader;
-import de.dwslab.T2K.tableprocessor.model.Table;
-import de.dwslab.T2K.utils.data.string.StringCleaner;
 
 public class DBpediaIndexer {
 
@@ -62,10 +58,10 @@ public class DBpediaIndexer {
     	            String label = t.getKey().getValues().get(i).toString();
                     
     	            // removes artifacts from the CSV format
-    	            String labelClean = StringCleaner.cleanString(label, false);
+    	            String labelClean = StringNormalizer.normaliseValue(label,false);
     	            
     	            // normalises the value to improve lookup results
-    	            label = StringNormaliser.normalise(labelClean, true);
+    	            label = StringNormalizer.normalise(labelClean, true);
     	                                
     	            //System.out.println(String.format("before: %s \t cleaned: %s \t after: %s", t.getKey().getValues().get(i).toString(), labelClean, label));
     	            

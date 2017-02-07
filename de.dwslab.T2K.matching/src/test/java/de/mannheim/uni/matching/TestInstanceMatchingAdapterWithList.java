@@ -42,4 +42,9 @@ public class TestInstanceMatchingAdapterWithList extends MatchingAdapter<TestIns
     public Collection getLabels(TestInstance instance) {
         return instance.getList();
     }
+
+    @Override
+    public Object getTokens(TestInstance instance) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

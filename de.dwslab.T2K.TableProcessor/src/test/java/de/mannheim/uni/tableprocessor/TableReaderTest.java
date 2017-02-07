@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.mannheim.uni.tableprocessor;
 
 import java.io.FileNotFoundException;
@@ -30,7 +14,7 @@ public class TableReaderTest extends TestCase {
     public void testReadWebTable() throws UnsupportedEncodingException, FileNotFoundException, IOException {
         TableReader r = new TableReader();
         
-        String path = "in/webtable.csv";
+        String path = "in/smallTests/web/webtable.csv";
         
         // Test without unit detection
         r.setUseUnitDetection(false);
@@ -81,7 +65,7 @@ public class TableReaderTest extends TestCase {
     public void testReadWebTable2() throws UnsupportedEncodingException, FileNotFoundException, IOException {
         TableReader r = new TableReader();
         
-        String path = "in/24036779_0_5608105867560183058.csv";
+        String path = "in/web/24036779_0_5608105867560183058.csv";
         
         // Test without unit detection
         r.setUseUnitDetection(false);
@@ -95,10 +79,10 @@ public class TableReaderTest extends TestCase {
     public void testReadLODTable() throws UnsupportedEncodingException, FileNotFoundException, IOException {
         TableReader r = new TableReader();
         
-        Table t = r.readLODTable("in/Athlete_small.csv");
+        Table t = r.readLODTable("in/dbpedia/Athlete_small.csv");
         
         for(TableColumn c : t.getColumns()) {
-            assertFalse(c.getHeader().endsWith("\""));
+            assertFalse(c.getHeader().toString().endsWith("\""));
             assertFalse(c.getURI().endsWith("\""));
         }
     }

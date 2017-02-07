@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,6 +15,12 @@
  */
 package de.dwslab.T2K.tableFilter;
 
+import de.dwslab.T2K.utils.concurrent.Consumer;
+import de.dwslab.T2K.utils.concurrent.Parallel;
+import de.dwslab.T2K.utils.concurrent.Producer;
+import de.dwslab.T2K.utils.io.SynchronizedTextWriter;
+import de.dwslab.T2K.utils.io.TarFileIterator;
+import de.dwslab.T2K.utils.java.BuildInfo;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,12 +37,6 @@ import java.util.zip.GZIPInputStream;
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.chainsaw.Main;
 
-import de.dwslab.T2K.utils.concurrent.Consumer;
-import de.dwslab.T2K.utils.concurrent.Parallel;
-import de.dwslab.T2K.utils.concurrent.Producer;
-import de.dwslab.T2K.utils.io.SynchronizedTextWriter;
-import de.dwslab.T2K.utils.io.TarFileIterator;
-import de.dwslab.T2K.utils.java.BuildInfo;
 
 public class FilterTablesByMetadata {
 

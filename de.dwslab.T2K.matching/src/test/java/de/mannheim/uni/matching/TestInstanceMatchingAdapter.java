@@ -29,5 +29,10 @@ public class TestInstanceMatchingAdapter extends MatchingAdapter<TestInstance> {
 	public Object getType(TestInstance instance) {
 		return instance.getType();
 	}
+
+    @Override
+    public Object getTokens(TestInstance instance) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 	
 }

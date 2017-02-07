@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,10 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.dwslab.T2K.matching.dbpedia.logging;
 
 import au.com.bytecode.opencsv.CSVWriter;
@@ -27,7 +22,6 @@ import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.matching.dbpedia.model.TableRow;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
-
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -85,8 +79,8 @@ public class MissingValueLogger {
                                         values[0] = inst1.getKey().toString();
                                         values[1] = inst2.getURI().toString();
                                         values[2] = cell1.getValue().toString();
-                                        values[3] = col1.getHeader();
-                                        values[4] = col2.getHeader();
+                                        values[3] = col1.getHeader().toString();
+                                        values[4] = col2.getHeader().toString();
                                         values[5] = webTable.getHeader();
                                         values[6] = ""+instCorres.isCorrect();
                                         values[7] = ""+prop.isCorrect();

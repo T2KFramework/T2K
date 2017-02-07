@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,8 +18,10 @@ package de.dwslab.T2K.tableprocessor.IO;
 import de.dwslab.T2K.tableprocessor.TableKeyIdentifier;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
+import de.dwslab.T2K.tableprocessor.model.json.TableData;
 import de.dwslab.T2K.util.Variables;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -67,6 +68,32 @@ public class TableReader {
         return t;
     }
     
+    public Table readWebTableFromJson(String path) {
+        JsonTableParser p = new JsonTableParser();
+        Table t = p.parseJson(new File(path));
+        if(t!=null) {
+            t.setFullPath(path);
+            prepareTable(t);
+            //identify the key
+//            TableKeyIdentifier keyIdentifier = new TableKeyIdentifier();
+//            keyIdentifier.identifyKeys(t);
+        }
+        return t;
+    }
+    
+    public Table readWebTableFromJson(TableData data, String path) {
+        JsonTableParser p = new JsonTableParser();
+        Table t = p.parseJson(data, path);
+        if(t!=null) {
+            t.setFullPath(path);
+            prepareTable(t);
+            //identify the key
+//            TableKeyIdentifier keyIdentifier = new TableKeyIdentifier();
+//            keyIdentifier.identifyKeys(t);
+        }
+        return t;
+    }
+    
     public Table readLODTable(String path) throws UnsupportedEncodingException, FileNotFoundException, IOException {
         Table t = conv.readLODTable(path);
         if(t!=null) {
@@ -85,5 +112,11 @@ public class TableReader {
                 c.setDataSource(table.getHeader());
             }            
         }
+    }
+    
+    public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        TableReader tr = new TableReader();
+        Table t = tr.readLODTable(args[0]);
+        System.out.println(t.printTable());
     }
 }

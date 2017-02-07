@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package de.dwslab.T2K.matching.dbpedia.model.adapters;
 
 import de.dwslab.T2K.matching.evaluation.EvaluationAdapter;
 import de.dwslab.T2K.tableprocessor.model.Table;
+
 
 /**
  *
@@ -31,7 +27,7 @@ public class DBpediaClassAdapter extends EvaluationAdapter<Table> {
 
     @Override
     public Object getUniqueIdentifier(Table instance) {
-        return instance.getHeader().split("\\.")[0];
+        return instance.getHeader().split("\\.")[0].toLowerCase();
     }
     
 }

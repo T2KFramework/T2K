@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,32 +15,27 @@
  */
 package de.dwslab.T2K.matching.dbpedia.matchers.schema;
 
-import java.util.Collection;
-import java.util.Map;
-
 import de.dwslab.T2K.matching.Matcher;
+import de.dwslab.T2K.matching.dbpedia.algorithm.PartialMatcher;
 import de.dwslab.T2K.matching.dbpedia.logging.MatchingLogger;
-import de.dwslab.T2K.matching.dbpedia.matchers.PartialMatcher;
+import de.dwslab.T2K.matching.dbpedia.model.GoldStandard;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingData;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingParameters;
+import de.dwslab.T2K.matching.dbpedia.model.Similarities;
 import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.matching.dbpedia.model.TableRow;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableColumnMatchingAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableColumnTableLabelAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableColumnToCellHierarchyAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableRowToCellHierarchyAdapter;
-import de.dwslab.T2K.matching.dbpedia.model.settings.GoldStandard;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingData;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingParameters;
-import de.dwslab.T2K.matching.dbpedia.model.settings.Similarities;
 import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
-import de.dwslab.T2K.similarity.matrix.SparseSimilarityMatrix;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
-import de.dwslab.T2K.utils.data.Pair;
 import de.dwslab.T2K.utils.query.Func;
 import de.dwslab.T2K.utils.query.Q;
 import de.dwslab.T2K.utils.timer.Timer;
-
-import java.util.List;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Schema Matcher that matches properties based on existing similarity matrices
@@ -171,6 +165,13 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
         SimilarityMatrix<TableRow> cand = null;
         
         cand = Matcher.selectedTopKCandidatesForEachInstance(getNumCandidatesPerInstance(), getCandidateSimilarity());
+        
+//        for(TableRow c1 : cand.getFirstDimension()) {
+//            for(TableRow c2 : cand.getMatches(c1)) {
+//                System.out.println("Top K " +c1 +" ---- "  +c2 + " --- " +cand.get(c1, c2));
+//            }
+//        }
+        
 //        if((getMatchingParameters().getPropertyMatchingFlags() & MatchingParameters.PROPERTY_TOP_K_CANDIDATES) != 0) {
 //            cand = Matcher.selectedTopKCandidatesForEachInstance(2, getCandidateSimilarity());
 //        } else {
@@ -224,6 +225,15 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
         }
         tm = Timer.getNamed("CombineHierarchy: weight value-based similarities with candidate similarities", t);
         SimilarityMatrix<TableCell> weightedInst = Matcher.multiplyParentSimilarity(cand, getValueSimilarity(), new TableRowToCellHierarchyAdapter());
+        
+        
+//        for(TableCell c1 : weightedInst.getFirstDimension()) {
+//            for(TableCell c2 : weightedInst.getMatches(c1)) {
+//                System.out.println("multipy Parent " +c1.getRowIndex() +  " ---- " + c1.getColumnIndex() + " --- " + c1.getValue() + " --- " + c2.getValue() + " --- " +weightedInst.get(c1, c2));
+//            }
+//        }
+        
+        
         tm.stop();
         if(getMatchingParameters().isCollectMatchingInfo()) {
             System.out.println("Property matching 2/4 ... done.");
@@ -255,6 +265,14 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
 //            voted = Matcher.selectBestCandidateForEachInstance(ConflictResolution.Maximum, weightedInst);
 //        }
         voted = Matcher.selectedTopKCandidatesForEachInstance(getNumVotesPerInstance(), weightedInst);
+//        
+//        System.out.println("voted!!");
+//        for(TableCell c1 : voted.getFirstDimension()) {
+//            for(TableCell c2 : voted.getMatches(c1)) {
+//                System.out.println(c1.getRowIndex() +  " ---- " + c1.getColumnIndex() + " --- " + c1.getValue() + " --- " + c2.getValue() + " --- " +voted.get(c1, c2));
+//            }
+//        }
+                
         tm.stop();
         if(getMatchingParameters().isCollectMatchingInfo()) {
             System.out.println("Property matching 3/4 ... done.");
@@ -267,13 +285,20 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
             System.out.println("Property matching 4/4 ...");
         }
         tm = Timer.getNamed("Aggregate property votes", t);
+        System.out.println(getLabelSimilarity());
+        System.out.println(getLabelSimilarity().getFirstDimension());
         SimilarityMatrix<TableColumn> aggregatedVotes = Matcher.sumChildrenSimilarity(voted, getLabelSimilarity(), new TableColumnToCellHierarchyAdapter());
         
+//        System.out.println("aggregated!");
+//        for(TableColumn c1 : aggregatedVotes.getFirstDimension()) {
+//            for(TableColumn c2 : aggregatedVotes.getMatches(c1)) {
+//                System.out.println(c1.getHeader() +  " ---- " + c2.getURI() + " --- " +aggregatedVotes.get(c1, c2));
+//            }
+//        }
+        
         // remove all similarities with the key columns on the RHS, as they will be set later on (an we don't want any additional mappings to the keys)
-        for(Table tab : data.getDbpediaTables()) {
-            
-            for(TableColumn c : data.getWebtable().getColumns()) {
-                
+        for(Table tab : data.getDbpediaTables()) {            
+            for(TableColumn c : data.getWebtable().getColumns()) {                
                 if(tab.getKey()!=null) {
                     aggregatedVotes.set(c, tab.getKey(), 0.0);
                 }
@@ -343,7 +368,8 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
          * make sure all keys on the right-hand side are mapped to the table key (until a final class decision is made)
          * also, we boost the score (=importance) of the key property
          */
-        makeKeysMatch(properties, data.getWebtable());
+        //TODO: not always the case!!!
+//        makeKeysMatch(properties, data.getWebtable());
         
         if(getMatchingParameters().isCollectMatchingInfo()) {
             System.out.println("column scores with key boosting");
@@ -362,7 +388,9 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
         /*
          * add values for the key properties of the super classes
          */
-        addSuperClassKeyMappings(properties, data.getWebtable());
+        
+        //TODO: just currently
+//        addSuperClassKeyMappings(properties, data.getWebtable());
         
         //getSimilarities().setPropertySimilarity(properties);
         
@@ -373,6 +401,13 @@ public class DuplicateBasedSchemaMatcher extends PartialMatcher<TableColumn> {
             System.out.println(properties.getOutput2(null, null, new TableColumnMatchingAdapter(), new TableColumnTableLabelAdapter()));
         }
         t.stop();
+        
+        System.out.println("return!");
+        for(TableColumn c1 : properties.getFirstDimension()) {
+            for(TableColumn c2 : properties.getMatches(c1)) {
+                System.out.println(c1.getHeader() +  " ---- " + c2.getURI() + " --- " +properties.get(c1, c2));
+            }
+        }
         
         return properties;
     }

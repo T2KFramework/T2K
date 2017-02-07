@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +21,6 @@ import java.util.List;
 
 import de.dwslab.T2K.matching.MatchingAdapter;
 import de.dwslab.T2K.matching.MatchingHierarchyAdapater;
-import de.dwslab.T2K.matching.MatchingPair;
 import de.dwslab.T2K.matching.ValueRange;
 import de.dwslab.T2K.matching.blocking.Blocking;
 import de.dwslab.T2K.matching.blocking.IdentityBlocking;
@@ -30,7 +28,6 @@ import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
 import de.dwslab.T2K.utils.concurrent.Consumer;
 import de.dwslab.T2K.utils.concurrent.Parallel;
 import de.dwslab.T2K.utils.data.Pair;
-import de.dwslab.T2K.utils.math.M;
 
 /**
  * Generic first-level matcher class generates one similarity value per value

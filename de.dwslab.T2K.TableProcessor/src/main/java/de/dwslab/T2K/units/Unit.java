@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,57 +15,58 @@
  */
 package de.dwslab.T2K.units;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
- * @author petar
  *
+ * @author domi
  */
-public class Unit
-	implements java.io.Serializable
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 72130226382025936L;
+public class Unit {
+    
+    private String name;
+    private Collection<String> abbreviations;
+    private double factor;
 
-	private String name;
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
 
-	private List<SubUnit> subunits;
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	private SubUnit mainUnit;
+    /**
+     * @return the abbreviations
+     */
+    public Collection<String> getAbbreviations() {
+        return abbreviations;
+    }
 
-	public String getName() {
-		return name;
-	}
+    /**
+     * @param abbreviations the abbreviations to set
+     */
+    public void setAbbreviations(Collection<String> abbreviations) {
+        this.abbreviations = abbreviations;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    /**
+     * @return the factor
+     */
+    public double getFactor() {
+        return factor;
+    }
 
-	public List<SubUnit> getSubunits() {
-		return subunits;
-	}
-
-	public void setSubunits(List<SubUnit> subunits) {
-		this.subunits = subunits;
-	}
-
-	public SubUnit getMainUnit() {
-		return mainUnit;
-	}
-
-	public void setMainUnit(SubUnit mainUnit) {
-		this.mainUnit = mainUnit;
-	}
-
-	public Unit() {
-		// TODO Auto-generated constructor stub
-	}
-
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-
-	}
-
+    /**
+     * @param factor the factor to set
+     */
+    public void setFactor(double factor) {
+        this.factor = factor;
+    }
+    
 }

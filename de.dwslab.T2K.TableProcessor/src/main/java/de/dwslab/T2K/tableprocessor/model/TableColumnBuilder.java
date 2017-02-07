@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +15,9 @@
  */
 package de.dwslab.T2K.tableprocessor.model;
 
+import de.dwslab.T2K.normalisation.StringNormalizer;
 import de.dwslab.T2K.tableprocessor.ColumnType;
 import de.dwslab.T2K.tableprocessor.IO.parsers.DateUtil;
-import de.dwslab.T2K.tableprocessor.model.TableColumn.ColumnDataType;
-import de.dwslab.T2K.units.UnitParserDomi;
-import de.dwslab.T2K.units.Unit_domi;
-import de.dwslab.T2K.util.Variables;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -30,18 +26,25 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import de.dwslab.T2K.tableprocessor.model.TableColumn.ColumnDataType;
+import de.dwslab.T2K.units.UnitParser;
+import de.dwslab.T2K.units.Unit;
+import de.dwslab.T2K.util.Variables;
+import java.text.NumberFormat;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Locale;
 import org.apache.commons.math3.stat.descriptive.SynchronizedDescriptiveStatistics;
 
 public class TableColumnBuilder {
 
     private TableColumn column;
     private Map<Integer, ColumnDataType> types;
-    private Map<Integer, Unit_domi> units;
+    private Map<Integer, Unit> units;
     private int numRows;
+    private Unit unitFromHeader;
 
     public TableColumnBuilder(Table table) {
         column = new TableColumn(table);
@@ -55,7 +58,7 @@ public class TableColumnBuilder {
     }
 
     public String getHeader() {
-        return column.getHeader();
+        return column.getHeader().toString();
     }
 
     public void setDataSource(String dataSource) {
@@ -74,12 +77,20 @@ public class TableColumnBuilder {
         return column.getDataType();
     }
 
+    public Unit getUnitFromHeader() {
+        return unitFromHeader;
+    }
+
+    public void setUnitFromHeader(Unit unitFromHeader) {
+        this.unitFromHeader = unitFromHeader;
+    }
+
     public void addValue(int rowIndex, Object value, ColumnType type) {
         synchronized (this) {
             if (value instanceof List) {
                 boolean allEmpty = true;
                 for (String s : (List<String>) value) {
-                    if (!s.equalsIgnoreCase(Variables.nullValue) && !s.isEmpty()) {
+                    if (!s.equalsIgnoreCase(StringNormalizer.nullValue) && !s.isEmpty()) {
                         allEmpty = false;
                         break;
                     }
@@ -93,7 +104,7 @@ public class TableColumnBuilder {
                 }
             } else {
                 String stringValue = (String) value;
-                if (!stringValue.equalsIgnoreCase(Variables.nullValue) && !stringValue.isEmpty()) {
+                if (!stringValue.equalsIgnoreCase(StringNormalizer.nullValue) && !stringValue.isEmpty()) {
                     // add the value
                     column.values.put(rowIndex, value);
                     // add the type
@@ -165,7 +176,7 @@ public class TableColumnBuilder {
             }
             // convert the strings into the correct data type
             typeValues();
-            Statistic s = new Statistic();   
+            Statistic s = new Statistic();
             computeStatistics(s);
             column.setColumnStatistic(s);
         }
@@ -185,10 +196,10 @@ public class TableColumnBuilder {
                     }
                 }
                 double sum = 0.0;
-                for(String value : allValues) {
+                for (String value : allValues) {
                     sum += value.length();
                 }
-                s.setAverageValueLength((double)sum/allValues.size());
+                s.setAverageValueLength((double) sum / allValues.size());
                 break;
             case numeric:
                 SynchronizedDescriptiveStatistics statistics = new SynchronizedDescriptiveStatistics();
@@ -203,13 +214,13 @@ public class TableColumnBuilder {
                     }
                 }
                 Set<Double> distinctValues = new HashSet<>();
-                for(double value : statistics.getValues()) {
+                for (double value : statistics.getValues()) {
                     distinctValues.add(value);
                 }
                 s.setVariance(statistics.getVariance());
                 s.setSkewness(statistics.getSkewness());
                 s.setKurtosis(statistics.getKurtosis());
-                s.setDistinctValues((double)distinctValues.size());
+                s.setDistinctValues((double) distinctValues.size());
                 s.setStandardDeviation(statistics.getStandardDeviation());
                 s.setAverage(statistics.getMean());
                 s.setMaximalValue(statistics.getMax());
@@ -225,13 +236,19 @@ public class TableColumnBuilder {
                             }
                         }
                     } else {
-                        if (((Date) object).before(minimal)) {
+                        Date d;
+                        try {
+                            d = (Date) object;
+                        } catch (Exception e) {
+                            continue;
+                        }
+                        if (d.before(minimal)) {
                             minimal = (Date) object;
                         }
                     }
                 }
                 s.setMinimalValue(minimal);
-                
+
                 Date maximal = new Date(0, 0, 1);
                 for (Object object : column.getValues().values()) {
                     if (object instanceof List) {
@@ -241,15 +258,18 @@ public class TableColumnBuilder {
                             }
                         }
                     } else {
-                        if (((Date) object).after(maximal)) {
-                            maximal = (Date) object;
+                        try {
+                            if (((Date) object).after(maximal)) {
+                                maximal = (Date) object;
+                            }
+                        } catch (ClassCastException ce) {
                         }
                     }
                 }
                 s.setMaximalValue(maximal);
                 break;
-        default:
-            break;
+            default:
+                break;
         }
     }
 
@@ -287,6 +307,9 @@ public class TableColumnBuilder {
                     typedValue = typeValue(entry.getValue(), units.get(entry.getKey()));
                     if (typedValue != null) {
                         column.getValues().put(entry.getKey(), typedValue);
+                    } else {
+                        // remove the value if it could not be typed
+                        removeValues.add(entry.getKey());
                     }
                 } catch (Exception e) {
                     removeValues.add(entry.getKey());
@@ -299,7 +322,7 @@ public class TableColumnBuilder {
         }
     }
 
-    private Object typeValue(Object entry, Unit_domi unit) throws ParseException {
+    private Object typeValue(Object entry, Unit unit) throws ParseException {
         Object typedValue = null;
         switch (getDataType()) {
             case string:
@@ -309,21 +332,25 @@ public class TableColumnBuilder {
                 typedValue = DateUtil.parse(entry.toString());
                 break;
             case numeric:
+                //TODO: how to handle nummers with commas (German style)
                 if (Variables.useUnitDetection && unit != null) {
-                    typedValue = UnitParserDomi.transformUnit(entry.toString(), unit);
+                    typedValue = UnitParser.transformUnit(entry.toString(), unit);
 
                 } else {
                     String value = entry.toString().replaceAll("[^0-9\\,\\.\\-Ee\\+]", "");
-                    typedValue = Double.parseDouble(value);
+                    NumberFormat format = NumberFormat.getInstance(Locale.US);
+                    Number number = format.parse(value);
+                    typedValue = number.doubleValue();
                 }
                 break;
             case bool:
                 typedValue = Boolean.parseBoolean(entry.toString());
                 break;
             case coordinate:
-                typedValue = GeoCoordinate.parseCoordinate(entry.toString());
+                typedValue = entry.toString();
                 break;
-
+            case link:
+                typedValue = entry.toString();
             default:
                 break;
         }

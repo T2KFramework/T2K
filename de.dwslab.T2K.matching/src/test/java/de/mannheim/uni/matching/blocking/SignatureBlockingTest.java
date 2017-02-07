@@ -16,12 +16,6 @@
  */
 package de.mannheim.uni.matching.blocking;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import de.dwslab.T2K.matching.similarity.signatures.NGramsSignatureGenerator;
-import de.dwslab.T2K.matching.similarity.signatures.PrefixFiltering;
 import junit.framework.TestCase;
 
 public class SignatureBlockingTest extends TestCase {

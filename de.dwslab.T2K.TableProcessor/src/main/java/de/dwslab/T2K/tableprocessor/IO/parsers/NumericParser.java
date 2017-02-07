@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -77,8 +76,7 @@ public class NumericParser {
         return fpRegex.matcher(text).matches();
     }
 
-    @SuppressWarnings("deprecation")
-	private static boolean parseByChar(String text) {
+    private static boolean parseByChar(String text) {
         // go char by char and see if it is code or some other number
         // this should be changed with units
         int nmNumbers = 0;

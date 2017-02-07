@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,12 +15,10 @@
  */
 package de.dwslab.T2K.matching.dbpedia.logging;
 
+import de.dwslab.T2K.tableprocessor.model.Table;
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.commons.io.FileUtils;
-
-import de.dwslab.T2K.tableprocessor.model.Table;
 
 public class MatchingLogger {
     private StringBuilder matchingLog = null;

@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,14 +15,10 @@
  */
 package de.dwslab.T2K.matching.dbpedia.properties;
 
+import de.dwslab.T2K.utils.io.CSVUtils;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.SortedSet;
-import java.util.TreeSet;
-
-import de.dwslab.T2K.utils.io.CSVUtils;
-
-import java.util.ArrayList;
 import java.util.List;
 
 public class Canoniser {
@@ -52,7 +47,7 @@ public class Canoniser {
     public String canoniseResource(String resource) {
         for(List<String> set : equivalentResources) {            
             if(set.contains(resource)) {                
-                return set.get(0);                
+                return set.get(0);              
             }            
         }        
         return resource;

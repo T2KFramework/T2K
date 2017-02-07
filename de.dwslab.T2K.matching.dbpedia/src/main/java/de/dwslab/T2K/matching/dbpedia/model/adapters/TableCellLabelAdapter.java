@@ -1,6 +1,5 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
+/*
+ * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,17 +18,23 @@ package de.dwslab.T2K.matching.dbpedia.model.adapters;
 import de.dwslab.T2K.matching.MatchingAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 
+
 public class TableCellLabelAdapter extends MatchingAdapter<TableCell> {
 
     @Override
     public Object getLabel(TableCell instance) {
-        String col = instance.getTable().getColumns().get(instance.getColumnIndex()).getHeader();
+        String col = instance.getTable().getColumns().get(instance.getColumnIndex()).getHeader().toString();
         String row = instance.getTable().getKey().getValues().get(instance.getRowIndex()).toString();
         return row + "/" + col;
     }
 
     @Override
     public Object getType(TableCell instance) {
+        return null;
+    }
+
+    @Override
+    public Object getTokens(TableCell instance) {
         return null;
     }
 
