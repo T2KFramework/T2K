@@ -1,34 +1,21 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.dbpedia.matchers.schema;
 
 import java.util.Collection;
 
+import de.dwslab.T2K.matching.dbpedia.algorithm.PartialMatcher;
 import de.dwslab.T2K.matching.dbpedia.logging.MatchingLogger;
-import de.dwslab.T2K.matching.dbpedia.matchers.PartialMatcher;
+import de.dwslab.T2K.matching.dbpedia.model.GoldStandard;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingData;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingParameters;
+import de.dwslab.T2K.matching.dbpedia.model.Similarities;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableToColumnMatchingAdapter;
-import de.dwslab.T2K.matching.dbpedia.model.settings.GoldStandard;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingData;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingParameters;
-import de.dwslab.T2K.matching.dbpedia.model.settings.Similarities;
 import de.dwslab.T2K.matching.secondline.Aggregate;
 import de.dwslab.T2K.matching.secondline.AggregationType;
+import de.dwslab.T2K.matching.secondline.CombinationType;
+import de.dwslab.T2K.matching.secondline.Combine;
 import de.dwslab.T2K.matching.secondline.ConflictResolution;
 import de.dwslab.T2K.matching.secondline.OneToOneConstraint;
+import de.dwslab.T2K.matching.secondline.TopKCandidates;
 import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
@@ -71,9 +58,10 @@ public class PropertyBasedClassMatcher extends PartialMatcher<Table> {
         SimilarityMatrix<TableColumn> prop = getPropertySimilarity().copy();
 
         // don't take into account matching keys (we want to remove classes if nothing but the key matches)
-        for (Table t : getClassSimilarity().getSecondDimension()) {
-            prop.set(data.getWebtable().getKey(), t.getKey(), null);
-        }
+        //test!
+//        for (Table t : getClassSimilarity().getSecondDimension()) {
+//            prop.set(data.getWebtable().getKey(), t.getKey(), null);
+//        }
 
         //TODO it could be a good idea to prune the property similarities beforehand, as we don't want a false class to be matches just because of a single value that overlaps by coincidence
 
@@ -86,6 +74,13 @@ public class PropertyBasedClassMatcher extends PartialMatcher<Table> {
         Timer tm = Timer.getNamed("Aggregate property similarities to class similarities", tim);
 
         SimilarityMatrix<Table> classPropSim = classPropSum.match(getClassSimilarity(), prop, new TableToColumnMatchingAdapter());
+                
+//        Combine<Table> combineClassAndProp = new Combine<>();
+//        combineClassAndProp.setAggregationType(CombinationType.Sum);
+//        SimilarityMatrix<Table>classPropSimCombinedWithKey = combineClassAndProp.match(classPropSim, getClassSimilarity());
+//        
+//        classPropSim = classPropSimCombinedWithKey;
+        
         tm.stop();
 
 //      if(getPropertySimilarity().getFirstDimension().size()>1) {
@@ -121,13 +116,14 @@ public class PropertyBasedClassMatcher extends PartialMatcher<Table> {
         }
 
         //run a 1:1 matcher here to choose the final class
-        OneToOneConstraint one = new OneToOneConstraint(ConflictResolution.Maximum);
+        OneToOneConstraint one = new OneToOneConstraint(ConflictResolution.Maximum);              
         SimilarityMatrix<Table> finalCls = one.match(newClass);
         finalCls.normalize();
+        
 
         //getSimilarities().setClassSimilarity(finalCls);
 
-        if (finalCls.getFirstDimension().size() > 0) {
+        if (finalCls.getFirstDimension().size() > 0 && finalCls.getMatchesAboveThreshold(data.getWebtable(), 0.0).size()>0) {
 //            try {
 //                finalClass = finalCls.getMatchesAboveThreshold(data.getWebtable(), 0.0).iterator().next();
 //            } catch(Exception e) {

@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.tableprocessor.IO;
 
 import java.io.FileInputStream;
@@ -25,24 +9,33 @@ import au.com.bytecode.opencsv.CSVReader;
 import de.dwslab.T2K.tableprocessor.ColumnType;
 import de.dwslab.T2K.tableprocessor.ColumnTypeGuesser;
 import de.dwslab.T2K.tableprocessor.model.Table;
+import de.dwslab.T2K.tableprocessor.model.TableColumn;
 import de.dwslab.T2K.tableprocessor.model.TableColumnBuilder;
+import de.dwslab.T2K.tableprocessor.model.TableMapping;
 import de.dwslab.T2K.tableprocessor.model.TableColumn.ColumnDataType;
-import de.dwslab.T2K.units.UnitParserDomi;
-import de.dwslab.T2K.units.Unit_domi;
+import de.dwslab.T2K.units.UnitParser;
+import de.dwslab.T2K.units.Unit;
 import de.dwslab.T2K.util.Variables;
-import de.dwslab.T2K.utils.concurrent.Consumer;
 import de.dwslab.T2K.utils.concurrent.Parallel;
 import de.dwslab.T2K.utils.concurrent.Producer;
+import de.dwslab.T2K.utils.concurrent.Consumer;
 import de.dwslab.T2K.utils.data.Pair;
+import de.dwslab.T2K.utils.data.string.LanguageEncoder;
+import de.uni_mannheim.informatik.dws.t2k.normalisation.StringNormalizer;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.GZIPInputStream;
+
+import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang.time.DurationFormatUtils;
 
 /**
  * @author petar
@@ -54,7 +47,7 @@ public class ConvertFileToTable {
     private Boolean cleanHeader = true;
     private boolean useUnitDetection = false;
     private int spanningCellThreshold = 1;
-    
+
     public void setUseUnitDetection(boolean useUnitDetection) {
         this.useUnitDetection = useUnitDetection;
 
@@ -100,6 +93,148 @@ public class ConvertFileToTable {
         }
     }
 
+    public Table readKGTable(String path) {
+        if (Variables.useUnitDetection) {
+            UnitParser.readInUnits();
+        }
+        // create new table
+        final Table table = new Table();
+        // take care of the header of the table
+        table.setHeader(path);
+        final List<TableColumnBuilder> colBuilders = new LinkedList<>();
+
+        try {
+            String[] columnNames;
+
+            final BufferedReader in = new BufferedReader(getReader(path));
+
+            // read the property names
+            String fileLine = in.readLine();
+            Variables.delimiter = "\t";
+            columnNames = fileLine.split(Variables.delimiter);
+
+            final Unit[] columnUnits = new Unit[columnNames.length];
+
+            // process all properties (=columns)
+            int i = 0;
+            for (String columnName : columnNames) {
+
+                // replace trailing " for the last column
+                columnName = columnName.replace("\"", "");
+                String columnUri = "http://woo/" + columnName;
+
+                // create the ColumnBuilder
+                TableColumnBuilder b = new TableColumnBuilder(table);
+                b.setHeader(columnName);
+                b.setUri(columnUri);
+                b.setDataType(ColumnDataType.unknown);
+                columnUnits[i] = UnitParser.parseUnitFromHeader(columnName);
+                colBuilders.add(b);
+                // add the column to the table
+                table.getColumns().add(b.getColumn());
+                i++;
+            }
+
+            table.setNumHeaderRows(1);
+
+            // start processing the table contents
+            final int rowIndex = 0;
+
+            new Parallel<Pair<Integer, String[]>>().producerConsumer(new Producer<Pair<Integer, String[]>>() {
+                @Override
+                public void execute() {
+                    int row = rowIndex;
+                    String[] values;
+
+                    try {
+                        String fileLine;
+                        while ((fileLine = in.readLine()) != null) {
+
+                            // handle the column splitting
+                            fileLine = fileLine.substring(1, fileLine.length() - 1);
+                            values = fileLine.split(Variables.delimiter);
+                            produce(new Pair<>(row++, values));
+                        }
+                        table.setTotalNumOfRows(row);
+                    } catch (IOException e) {
+                    }
+                }
+            }, new Consumer<Pair<Integer, String[]>>() {
+                @Override
+                public void execute(Pair<Integer, String[]> parameter) {
+
+                    int rowIndex = parameter.getFirst();
+
+                    // iterate all columns
+                    int columnIndex = 0;
+                    for (String columnValue : parameter.getSecond()) {
+                        TableColumnBuilder b = null;
+
+                        if (columnIndex >= colBuilders.size()) {
+                            return;
+                        } else {
+                            b = colBuilders.get(columnIndex);
+                        }
+                        ColumnType valueType = new ColumnType(b.getDataType(), null);
+
+                        if (!columnValue.equalsIgnoreCase(StringNormalizer.nullValue) && !columnValue.isEmpty()) {
+
+                            // guess the type if not already set
+                            boolean list = false;
+                            if (table.getColumns().get(columnIndex).getDataType() == ColumnDataType.unknown) {
+
+                                if (columnValue.contains("^^<http")) {
+                                    String[] content = columnValue.split("\\^\\^");
+                                    switch (content[1]) {
+                                        case "<http://www.w3.org/2001/XMLSchema#boolean>":
+                                            valueType = new ColumnType(ColumnDataType.bool, columnUnits[columnIndex]);
+                                            break;
+                                        case "<http://www.w3.org/2001/XMLSchema#double>":
+                                        case "<http://www.w3.org/2001/XMLSchema#integer>":
+                                            valueType = new ColumnType(ColumnDataType.numeric, columnUnits[columnIndex]);
+                                            break;
+                                    }
+                                    columnValue = content[0];
+                                } else {
+                                    // detect the unit and guess the type
+                                    //TODO: use the determined datatype? e.g. for populationDensity?
+                                    valueType = typeGuesser.guessTypeForValue(columnValue, columnUnits[columnIndex]);
+                                }
+
+                            }
+                            if (checkIfList(columnValue)) {
+                                List<String> columnValues;
+                                columnValue = columnValue.replace("{", "");
+                                columnValue = columnValue.replace("}", "");
+                                columnValues = Arrays.asList(columnValue.split("\\|"));
+                                b.addValue(rowIndex, columnValues, valueType);
+                                list = true;
+                            }
+
+                            if (!list) {
+                                // add the new value
+                                b.addValue(rowIndex, columnValue, valueType);
+                            }
+                        }
+                        columnIndex++;
+                    }
+                }
+            });
+
+            in.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        // finalise the column building
+        for (TableColumnBuilder b : colBuilders) {
+            b.buildColumn();
+        }
+
+        return table;
+    }
+
     /**
      *
      * read as LOD table expecting the DBpedia-to-tables CSV format.
@@ -109,7 +244,7 @@ public class ConvertFileToTable {
      */
     public Table readLODTable(String path) {
         if (Variables.useUnitDetection) {
-            UnitParserDomi.readInUnits();
+            UnitParser.readInUnits();
         }
         // create new table
         final Table table = new Table();
@@ -128,6 +263,28 @@ public class ConvertFileToTable {
             String fileLine = in.readLine();
             columnNames = fileLine.split(Variables.delimiter);
 
+            // skip annotations
+            boolean isMetaData = columnNames[0].startsWith("#");
+            // if the current line starts with #, check for valid annotations
+            while (isMetaData) {
+                isMetaData = false;
+
+                // check all valid annotations
+                for (String s : TableMapping.VALID_ANNOTATIONS) {
+                    if (columnNames[0].startsWith(s)) {
+                        isMetaData = true;
+                        break;
+                    }
+                }
+
+                // if the current line is an annotation, read the next line and start over
+                if (isMetaData) {
+                    fileLine = in.readLine();
+                    columnNames = fileLine.split(Variables.delimiter);
+                    isMetaData = columnNames[0].startsWith("#");
+                }
+            }
+
             // read the property URIs
             columnURIs = in.readLine().split(Variables.delimiter);
 
@@ -135,8 +292,8 @@ public class ConvertFileToTable {
             fileLine = in.readLine();
             columntypes = fileLine.split(Variables.delimiter);
 
-            final Unit_domi[] columnUnits = new Unit_domi[columnNames.length];
-            
+            final Unit[] columnUnits = new Unit[columnNames.length];
+
             // process all properties (=columns)
             int i = 0;
             for (String columnName : columnNames) {
@@ -155,31 +312,30 @@ public class ConvertFileToTable {
                 //TODO what about other primitive types?
                 String datatype = columntypes[i];
                 switch (datatype) {
-                case "XMLSchema#date":
-                case  "XMLSchema#gYear":
-                    b.setDataType(ColumnDataType.date);
-                    break;
-                case "XMLSchema#double":
-                case "XMLSchema#float":
-                case "XMLSchema#nonNegativeInteger":
-                case "XMLSchema#positiveInteger":
-                    b.setDataType(ColumnDataType.numeric);
-                    break;
-                case "XMLSchema#string":
-                    b.setDataType(ColumnDataType.string);
-                    break;
-
-                default:                    
-                    b.setDataType(ColumnDataType.unknown);
+                    case "XMLSchema#date":
+                    case "XMLSchema#gYear":
+                        b.setDataType(ColumnDataType.date);
+                        break;
+                    case "XMLSchema#double":
+                    case "XMLSchema#float":
+                    case "XMLSchema#nonNegativeInteger":
+                    case "XMLSchema#positiveInteger":
+                    case "XMLSchema#integer":
+                    case "XMLSchema#negativeInteger":
+                        b.setDataType(ColumnDataType.numeric);
+                        break;
+                    case "XMLSchema#string":
+                        b.setDataType(ColumnDataType.string);
+                        break;
+                    case "XMLSchema#boolean":
+                        b.setDataType(ColumnDataType.bool);
+                        break;
+                    default:
+                        b.setDataType(ColumnDataType.unknown);
                 }
-//                if (datatype.equals("XMLSchema#date") || datatype.equals("XMLSchema#gYear")) {
-//                    b.setDataType(ColumnDataType.date);
-//                } else {
-//                    b.setDataType(ColumnDataType.unknown);
-//                }
 
-                columnUnits[i] = UnitParserDomi.parseUnitFromHeader(columnName);
-                
+                columnUnits[i] = UnitParser.parseUnitFromHeader(columnName);
+
                 colBuilders.add(b);
                 // add the column to the table
                 table.getColumns().add(b.getColumn());
@@ -188,16 +344,14 @@ public class ConvertFileToTable {
 
             // skip the last header
             fileLine = in.readLine();
-            
+
             table.setNumHeaderRows(4);
 
             // start processing the table contents
-            
 //            long start = System.currentTimeMillis();
-
             // the absolute row number in the file (offset of 4!)
             final int rowIndex = 0;
-            
+
             new Parallel<Pair<Integer, String[]>>().producerConsumer(new Producer<Pair<Integer, String[]>>() {
                 @Override
                 public void execute() {
@@ -207,13 +361,14 @@ public class ConvertFileToTable {
                     try {
                         String fileLine;
                         while ((fileLine = in.readLine()) != null) {
-                            
-                         // handle the column splitting
+
+                            // handle the column splitting
+                            //fileLine = fileLine.substring(1, fileLine.length());
                             fileLine = fileLine.substring(1, fileLine.length() - 1);
                             values = fileLine.split(Variables.delimiter);
-                            
                             produce(new Pair<>(row++, values));
                         }
+                        table.setTotalNumOfRows(row);
                     } catch (IOException e) {
                     }
                 }
@@ -222,15 +377,20 @@ public class ConvertFileToTable {
                 public void execute(Pair<Integer, String[]> parameter) {
 
                     int rowIndex = parameter.getFirst();
-                    
+
                     // iterate all columns
                     int columnIndex = 0;
                     for (String columnValue : parameter.getSecond()) {
+                        TableColumnBuilder b = null;
 
-                        TableColumnBuilder b = colBuilders.get(columnIndex);
+                        if (columnIndex >= colBuilders.size()) {
+                            return;
+                        } else {
+                            b = colBuilders.get(columnIndex);
+                        }
                         ColumnType valueType = new ColumnType(b.getDataType(), null);
 
-                        if (!columnValue.equalsIgnoreCase(Variables.nullValue)) {
+                        if (!columnValue.equalsIgnoreCase(StringNormalizer.nullValue)) {
 
                             // guess the type if not already set
                             boolean list = false;
@@ -259,8 +419,6 @@ public class ConvertFileToTable {
                     }
                 }
             });
-            
-
 
 //            while ((fileLine = in.readLine()) != null) {
 //
@@ -349,7 +507,7 @@ public class ConvertFileToTable {
      */
     public Table readWebTable(String tablePath) throws UnsupportedEncodingException, FileNotFoundException, IOException {
         if (Variables.useUnitDetection) {
-            UnitParserDomi.readInUnits();
+            UnitParser.readInUnits();
         }
         // create new table
         final Table table = new Table();
@@ -377,8 +535,29 @@ public class ConvertFileToTable {
                 reader.close();
                 return null;
             }
-            
-            final Unit_domi[] columnUnits = new Unit_domi[columnNames.length];
+
+            // skip annotations
+            //currently not used
+            boolean isMetaData = columnNames[0].startsWith("#");
+            // if the current line starts with #, check for valid annotations
+            while (isMetaData) {
+                isMetaData = false;
+
+                // check all valid annotations
+                for (String s : TableMapping.VALID_ANNOTATIONS) {
+                    if (columnNames[0].startsWith(s)) {
+                        isMetaData = true;
+                        break;
+                    }
+                }
+
+                // if the current line is an annotation, read the next line and start over
+                if (isMetaData) {
+                    columnNames = reader.readNext();
+                    isMetaData = columnNames[0].startsWith("#");
+                }
+            }
+            final Unit[] columnUnits = new Unit[columnNames.length];
 
             //set the header for each column (take the first row!)
             int colIdx = 0;
@@ -388,15 +567,16 @@ public class ConvertFileToTable {
                 // set the header
                 String header = columnName;
                 if (cleanHeader) {
-                    header = StringNormalizer.cleanWebHeader(StringNormalizer.simpleStringNormalization(columnName, false));
+                    header = StringNormalizer.normaliseHeader(columnName);
                 }
                 b.setHeader(header);
 
                 // parse units from headers
-                columnUnits[colIdx++] = UnitParserDomi.parseUnitFromHeader(columnName);
-                
+                columnUnits[colIdx++] = UnitParser.parseUnitFromHeader(columnName);
+
                 colBuilders.add(b);
                 table.getColumns().add(b.getColumn());
+                b.setUri(table.getHeader() + "-" + table.getColumns().indexOf(b.getColumn()));
             }
             table.setNumHeaderRows(1);
 
@@ -412,13 +592,15 @@ public class ConvertFileToTable {
                     try {
                         while ((values = reader.readNext()) != null) {
                             produce(new Pair<>(row++, values));
-
-//                            for(String v : values) {
+//                            System.out.println(row);
+//                            for (String v : values) {
 //                                System.out.print(v + "\t");
 //                            }
 //                            System.out.println();
                         }
+                        table.setTotalNumOfRows(row);
                     } catch (IOException e) {
+                        System.out.println("EXCEPTION for " + row + "\t" + e.getMessage());
                     }
                 }
             }, new Consumer<Pair<Integer, String[]>>() {
@@ -427,37 +609,46 @@ public class ConvertFileToTable {
                     int rowNumber = parameter.getFirst();
                     String[] values = parameter.getSecond();
 
+//                    System.out.println("now in exevute " +rowNumber);
+//                    for (String v : values) {
+//                        System.out.print(v + "\t");
+//                    }
+//                    System.out.println();
 
                     int columnIndex = 0;
-                    
+
                     String last = null;
                     int duplicateCount = 0;
 
                     // check for spanning cells
                     for (String columnValue : values) {
 
-                        if(columnValue!=null && columnValue.equals(last)) {
+                        if (columnValue != null && columnValue.equals(last)) {
                             duplicateCount++;
                         }
                         last = columnValue;
                     }
-                    
-                    if(duplicateCount>getSpanningCellThreshold() && getSpanningCellThreshold()>0) {
+
+                    if (duplicateCount > getSpanningCellThreshold() && getSpanningCellThreshold() > 0) {
                         // this row contains spanning cells, so we ignore it
                         return;
                     }
-                    
+
                     for (String columnValue : values) {
-                        
+
                         if (columnIndex < table.getColumns().size()) {
 
                             TableColumnBuilder b = colBuilders.get(columnIndex);
-                            
+
+                            LanguageEncoder le = new LanguageEncoder();
                             //TODO: replace all HTML encodings
-                            if(columnValue.contains("&mdash")) {
-                                columnValue = columnValue.replace("&mdash", "-");
-                            }
-                            
+                            columnValue = le.encodeString(columnValue);                           
+                            	
+
+//                            if (columnValue.contains("&quot;")) {
+//                                columnValue = columnValue.replace("&quot;", "");
+//                            }
+
                             // handle lists
                             if (checkIfList(columnValue)) {
                                 //valueType = ColumnDataType.list;
@@ -479,6 +670,7 @@ public class ConvertFileToTable {
                                 columnValues = Arrays.asList(columnValue.split("\\|"));
                                 b.addValue(rowNumber, columnValues, valueType);
                             } else {
+                                //System.out.println("read table: " + rowNumber + "\t" + columnValue + "\t" + valueType);
                                 b.addValue(rowNumber, columnValue, valueType);
                             }
                         }
@@ -503,15 +695,14 @@ public class ConvertFileToTable {
     protected String normaliseValue(String value) {
         //String columnValueNormalized = StringNormalizer.simpleStringNormalization(value, true);
         //String columnValueNormalized = StringNormalizer.simpleStringNormalization(value, false);
-        String columnValueNormalized = StringNormalizer.webStringNormalization(value);
+        String columnValueNormalized = StringNormalizer.normaliseValue(value, false);
         return columnValueNormalized;
     }
-
     private static Pattern listPattern = Pattern.compile("^\\{.+\\|.+\\}$");
-    
+
     private boolean checkIfList(String columnValue) {
         //if (columnValue.matches("^\\{.+\\|.+\\}$")) {
-        if(listPattern.matcher(columnValue).matches()) {
+        if (listPattern.matcher(columnValue).matches()) {
             return true;
         }
         return false;

@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.firstline;
 
 import java.io.BufferedReader;
@@ -27,14 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
-
 import org.apache.commons.lang3.StringUtils;
-
 import de.dwslab.T2K.matching.MatchingAdapter;
 import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
 import de.dwslab.T2K.utils.concurrent.Consumer;
 import de.dwslab.T2K.utils.concurrent.Parallel;
-import de.dwslab.T2K.utils.data.string.StringCleaner;
+import de.uni_mannheim.informatik.dws.t2k.normalisation.StringNormalizer;
 
 /**
  * A wrapper class for the FastJoin matcher
@@ -82,29 +64,36 @@ public class FastJoinMatcher<T> extends LabelBasedMatcher<T> {
         this.tau = tau;
     }
     
+    @Override
     public SimilarityMatrix<T> match(Collection<T> instancesToMatch,
             final Collection<T> candidates, MatchingAdapter<T> adapter) {
         
         // create similarity matrix
         SimilarityMatrix<T> sim = getSimilarityMatrixFactory().createSimilarityMatrix(instancesToMatch.size(), candidates.size());
         
-        final Collection<T> blockedCandidates = new ConcurrentLinkedQueue<T>();
+        final Collection<T> blockedCandidates;
         
-        // iterate over all instances to match
-        try {
-            new Parallel<T>().foreach(instancesToMatch, new Consumer<T>() {
-
-                public void execute(T parameter) {
-                    // iterate over all candidates (all instances that could be matched to the current instance)
-                    for(T candidate : getBlocking().getCandidates(parameter, candidates))
-                    {
-                        blockedCandidates.add(candidate);
+        if(getBlocking()!=null) {
+            blockedCandidates = new ConcurrentLinkedQueue<T>();
+            
+            // iterate over all instances to match
+            try {
+                new Parallel<T>().foreach(instancesToMatch, new Consumer<T>() {
+    
+                    public void execute(T parameter) {
+                        // iterate over all candidates (all instances that could be matched to the current instance)
+                        for(T candidate : getBlocking().getCandidates(parameter, candidates))
+                        {
+                            blockedCandidates.add(candidate);
+                        }
                     }
-                }
-                
-            });
-        } catch (Exception e) {
-            e.printStackTrace();
+                    
+                }, "FastJoinMatcher: Blocking");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            blockedCandidates = candidates;
         }
         
         // run fastjoin
@@ -227,7 +216,7 @@ public class FastJoinMatcher<T> extends LabelBasedMatcher<T> {
             for(T instance : values)
             {
                 m.put(i, instance);
-                String normValue = StringCleaner.cleanString(adapter.getLabel(instance).toString(), true);
+                String normValue = StringNormalizer.normaliseValue(adapter.getLabel(instance).toString(), true);
                 normValue = normaliseString4FastJoin(normValue);
                 w.write(normValue + "\n");
                 i++;

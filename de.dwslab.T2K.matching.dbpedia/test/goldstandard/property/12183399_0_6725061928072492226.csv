@@ -1,0 +1,5 @@
+"http://dbpedia.org/ontology/currencyCode","currency code"
+"http://dbpedia.org/ontology/commonName","country"
+"http://dbpedia.org/ontology/iso31661Code","country code(2-character)"
+"http://dbpedia.org/ontology/iso31661Code","country code(3-character)"
+"http://dbpedia.org/ontology/currency","currency"

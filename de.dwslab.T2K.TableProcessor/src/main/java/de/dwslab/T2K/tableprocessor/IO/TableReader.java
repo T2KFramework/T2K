@@ -1,26 +1,12 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.tableprocessor.IO;
 
 import de.dwslab.T2K.tableprocessor.TableKeyIdentifier;
 import de.dwslab.T2K.tableprocessor.model.Table;
 import de.dwslab.T2K.tableprocessor.model.TableColumn;
+import de.dwslab.T2K.tableprocessor.model.json.TableData;
 import de.dwslab.T2K.util.Variables;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -63,6 +49,55 @@ public class TableReader {
             //identify the key
             TableKeyIdentifier keyIdentifier = new TableKeyIdentifier();
             keyIdentifier.identifyKeys(t);
+            t.setPageTitle(t.getHeader().replaceAll("\\.html.*", ""));
+            t.setSource(t.getHeader().replaceAll("\\.html.*", ""));
+            t.setContextAfterTable("");
+            t.setContextBeforeTable("");
+            t.setTableTitle("");
+        }
+        return t;
+    }
+    
+    public Table readWebTableFromJson(String path) {
+        JsonTableParser p = new JsonTableParser();
+        Table t = p.parseJson(new File(path));
+        if(t!=null) {
+            t.setFullPath(path);
+            prepareTable(t);
+            //identify the key
+//            TableKeyIdentifier keyIdentifier = new TableKeyIdentifier();
+//            keyIdentifier.identifyKeys(t);
+        }
+        return t;
+    }
+    
+//    public Table readWebTableFromJson(TableData data, String path) {
+//        JsonTableParser p = new JsonTableParser();
+//        Table t = p.parseJson(data, path);
+//        if(t!=null) {
+//            t.setFullPath(path);
+//            prepareTable(t);
+//            //identify the key
+////            TableKeyIdentifier keyIdentifier = new TableKeyIdentifier();
+////            keyIdentifier.identifyKeys(t);
+//        }
+//        return t;
+//    }
+    
+    public Table readKGTable(String path) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        Table t = conv.readKGTable(path);
+        if(t!=null) {
+            t.setFullPath(path);
+            prepareTable(t);
+            //identify the key
+            TableKeyIdentifier keyIdentifier = new TableKeyIdentifier();
+            keyIdentifier.indenfityLODKeys(t);
+            for(TableColumn c : t.getColumns()) {
+                if(c.getHeader().toString().toLowerCase().contains("wikiid")) {
+                    System.out.println("wiki id " + t.getColumns().indexOf(c));
+                    t.setWikiIDCol(t.getColumns().indexOf(c));
+                }
+            }
         }
         return t;
     }
@@ -79,11 +114,17 @@ public class TableReader {
         return t;
     }
 
-    private void prepareTable(Table table) {
+    public void prepareTable(Table table) {
         if (table != null) {
             for (TableColumn c : table.getColumns()) {
                 c.setDataSource(table.getHeader());
             }            
         }
+    }
+    
+    public static void main(String[] args) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+        TableReader tr = new TableReader();
+        Table t = tr.readLODTable(args[0]);
+        System.out.println(t.printTable());
     }
 }

@@ -1,0 +1,813 @@
+Loading DBpedia ... 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!DON'T USE UNITS IN MULTIPLE THREADS!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+loading D:\workspaces\SearchJoins-Refactoring\matching.dbpedia\in\dbpedia\Country.csv
+0 rows were read for:0
+1000 rows were read for:1840
+2000 rows were read for:2919
+3000 rows were read for:4210
+Loading DBpedia ... done
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!!!!!!!DON'T USE UNITS IN MULTIPLE THREADS!!!!!!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ERROR StatusLogger No log4j2 configuration file found. Using default configuration: logging only errors to the console.
+Candidate selection ... Query: label:china~2
+ found 55 hits
+ returning 55 documents
+Query: label:india~2
+ found 42 hits
+ returning 42 documents
+Query: label:united label:states label:america~2
+ found 100 hits
+ returning 100 documents
+Query: label:indonesia~2
+ found 6 hits
+ returning 6 documents
+Query: label:brazil~2
+ found 11 hits
+ returning 11 documents
+Query: label:pakistan~2
+ found 14 hits
+ returning 14 documents
+Query: label:bangladesh~2
+ found 6 hits
+ returning 6 documents
+Query: label:nigeria~2
+ found 20 hits
+ returning 20 documents
+Query: label:russia~2
+ found 26 hits
+ returning 26 documents
+Query: label:japan~2
+ found 15 hits
+ returning 15 documents
+Query: label:mexico~2
+ found 12 hits
+ returning 12 documents
+Query: label:phillipines~2
+ found 8 hits
+ returning 8 documents
+Query: label:vietnam~2
+ found 7 hits
+ returning 7 documents
+Query: label:germany~2
+ found 26 hits
+ returning 26 documents
+Query: label:ethopia~2
+ found 6 hits
+ returning 6 documents
+Query: label:egypt~2
+ found 15 hits
+ returning 15 documents
+Query: label:iran~2
+ found 100 hits
+ returning 100 documents
+Query: label:turkey~2
+ found 9 hits
+ returning 9 documents
+Query: label:congo label:dem label:rep label:)~2
+ found 8 hits
+ returning 8 documents
+Query: label:france~2
+ found 71 hits
+ returning 71 documents
+Query: label:thailand~2
+ found 5 hits
+ returning 5 documents
+Query: label:united label:kingdom label:(uk)~2
+ found 100 hits
+ returning 100 documents
+Query: label:italy~2
+ found 10 hits
+ returning 10 documents
+Query: label:myanmar~2
+ found 3 hits
+ returning 3 documents
+Query: label:south label:africa~2
+ found 72 hits
+ returning 72 documents
+Query: label:korea label:(south)~2
+ found 50 hits
+ returning 50 documents
+Query: label:spain~2
+ found 46 hits
+ returning 46 documents
+Query: label:ukraine~2
+ found 6 hits
+ returning 6 documents
+Query: label:colombia~2
+ found 8 hits
+ returning 8 documents
+Query: label:tanzania~2
+ found 3 hits
+ returning 3 documents
+Query: label:kenya~2
+ found 12 hits
+ returning 12 documents
+Query: label:argentina~2
+ found 5 hits
+ returning 5 documents
+Query: label:sudan~2
+ found 30 hits
+ returning 30 documents
+Query: label:poland~2
+ found 31 hits
+ returning 31 documents
+Query: label:algeria~2
+ found 15 hits
+ returning 15 documents
+Query: label:canada~2
+ found 27 hits
+ returning 27 documents
+Query: label:uganda~2
+ found 12 hits
+ returning 12 documents
+Query: label:morocco~2
+ found 6 hits
+ returning 6 documents
+Query: label:iraq~2
+ found 45 hits
+ returning 45 documents
+Query: label:nepal~2
+ found 10 hits
+ returning 10 documents
+Query: label:peru~2
+ found 24 hits
+ returning 24 documents
+Query: label:afghanistan~2
+ found 10 hits
+ returning 10 documents
+Query: label:venezuela~2
+ found 4 hits
+ returning 4 documents
+Query: label:malaysia~2
+ found 8 hits
+ returning 8 documents
+Query: label:uzbekistan~2
+ found 2 hits
+ returning 2 documents
+Query: label:saudi label:arabia~2
+ found 22 hits
+ returning 22 documents
+Query: label:ghana~2
+ found 61 hits
+ returning 61 documents
+Query: label:yemen~2
+ found 13 hits
+ returning 13 documents
+Query: label:korea label:(north)~2
+ found 30 hits
+ returning 30 documents
+Query: label:mozambique~2
+ found 3 hits
+ returning 3 documents
+Query: label:syria~2
+ found 40 hits
+ returning 40 documents
+Query: label:australia~2
+ found 25 hits
+ returning 25 documents
+Query: label:cote label:d'ivoire~2
+ found 0 hits
+ returning 0 documents
+Query: label:romania~2
+ found 24 hits
+ returning 24 documents
+Query: label:madagascar~2
+ found 5 hits
+ returning 5 documents
+Query: label:sri label:lanka~2
+ found 23 hits
+ returning 23 documents
+Query: label:cameroon~2
+ found 6 hits
+ returning 6 documents
+Query: label:angola~2
+ found 9 hits
+ returning 9 documents
+Query: label:chile~2
+ found 30 hits
+ returning 30 documents
+Query: label:netherlands~2
+ found 19 hits
+ returning 19 documents
+Query: label:burkina label:faso~2
+ found 53 hits
+ returning 53 documents
+Query: label:kazakhstan~2
+ found 1 hits
+ returning 1 documents
+Query: label:niger~2
+ found 22 hits
+ returning 22 documents
+Query: label:malawi~2
+ found 9 hits
+ returning 9 documents
+Query: label:mali~2
+ found 50 hits
+ returning 50 documents
+Query: label:guatemala~2
+ found 3 hits
+ returning 3 documents
+Query: label:ecuador~2
+ found 1 hits
+ returning 1 documents
+Query: label:cambodia~2
+ found 9 hits
+ returning 9 documents
+Query: label:zambia~2
+ found 9 hits
+ returning 9 documents
+Query: label:senegal~2
+ found 23 hits
+ returning 23 documents
+Query: label:zimbabwe~2
+ found 6 hits
+ returning 6 documents
+Query: label:greece~2
+ found 12 hits
+ returning 12 documents
+Query: label:chad~2
+ found 29 hits
+ returning 29 documents
+Query: label:cuba~2
+ found 22 hits
+ returning 22 documents
+Query: label:belgium~2
+ found 11 hits
+ returning 11 documents
+Query: label:portugal~2
+ found 9 hits
+ returning 9 documents
+Query: label:czech label:republic~2
+ found 100 hits
+ returning 100 documents
+Query: label:tunisia~2
+ found 6 hits
+ returning 6 documents
+Query: label:guinea~2
+ found 12 hits
+ returning 12 documents
+Query: label:rwanda~2
+ found 11 hits
+ returning 11 documents
+Query: label:dominican label:republic~2
+ found 100 hits
+ returning 100 documents
+Query: label:haiti~2
+ found 9 hits
+ returning 9 documents
+Query: label:bolivia~2
+ found 2 hits
+ returning 2 documents
+Query: label:hungary~2
+ found 10 hits
+ returning 10 documents
+Query: label:serbia label:montenegro~2
+ found 19 hits
+ returning 19 documents
+Query: label:belarus~2
+ found 1 hits
+ returning 1 documents
+Query: label:sweden~2
+ found 5 hits
+ returning 5 documents
+Query: label:somalia~2
+ found 12 hits
+ returning 12 documents
+Query: label:benin~2
+ found 9 hits
+ returning 9 documents
+Query: label:azerbaijan~2
+ found 7 hits
+ returning 7 documents
+Query: label:burundi~2
+ found 7 hits
+ returning 7 documents
+Query: label:austria~2
+ found 29 hits
+ returning 29 documents
+Query: label:switzerland~2
+ found 5 hits
+ returning 5 documents
+Query: label:honduras~2
+ found 3 hits
+ returning 3 documents
+Query: label:israel~2
+ found 8 hits
+ returning 8 documents
+Query: label:bulgaria~2
+ found 15 hits
+ returning 15 documents
+Query: label:tajikstan~2
+ found 1 hits
+ returning 1 documents
+Query: label:papua label:new label:guinea~2
+ found 52 hits
+ returning 52 documents
+Query: label:togo~2
+ found 27 hits
+ returning 27 documents
+Query: label:libya~2
+ found 9 hits
+ returning 9 documents
+Query: label:jordan~2
+ found 5 hits
+ returning 5 documents
+Query: label:paraguay~2
+ found 3 hits
+ returning 3 documents
+Query: label:laos~2
+ found 89 hits
+ returning 89 documents
+Query: label:el label:salvador~2
+ found 1 hits
+ returning 1 documents
+Query: label:sierra label:leone~2
+ found 24 hits
+ returning 24 documents
+Query: label:nicaragua~2
+ found 2 hits
+ returning 2 documents
+Query: label:kyrgyzstan~2
+ found 1 hits
+ returning 1 documents
+Query: label:denmark~2
+ found 5 hits
+ returning 5 documents
+Query: label:slovakia~2
+ found 11 hits
+ returning 11 documents
+Query: label:finland~2
+ found 21 hits
+ returning 21 documents
+Query: label:eritrea~2
+ found 4 hits
+ returning 4 documents
+Query: label:turkmenistan~2
+ found 1 hits
+ returning 1 documents
+Query: label:singapore~2
+ found 8 hits
+ returning 8 documents
+Query: label:norway~2
+ found 4 hits
+ returning 4 documents
+Query: label:united label:arab label:emirates~2
+ found 100 hits
+ returning 100 documents
+Query: label:costa label:rica~2
+ found 40 hits
+ returning 40 documents
+Query: label:central label:african label:republic~2
+ found 100 hits
+ returning 100 documents
+Query: label:ireland~2
+ found 29 hits
+ returning 29 documents
+Query: label:georgia~2
+ found 8 hits
+ returning 8 documents
+Query: label:croatia~2
+ found 11 hits
+ returning 11 documents
+Query: label:new label:zealand~2
+ found 46 hits
+ returning 46 documents
+Query: label:lebanon~2
+ found 6 hits
+ returning 6 documents
+Query: label:bosnia label:herzegovina~2
+ found 10 hits
+ returning 10 documents
+Query: label:congo label:(rep.)~2
+ found 8 hits
+ returning 8 documents
+Query: label:moldova~2
+ found 2 hits
+ returning 2 documents
+Query: label:liberia~2
+ found 13 hits
+ returning 13 documents
+Query: label:uruguay~2
+ found 1 hits
+ returning 1 documents
+Query: label:mauritania~2
+ found 4 hits
+ returning 4 documents
+Query: label:lithuania~2
+ found 11 hits
+ returning 11 documents
+Query: label:panama~2
+ found 16 hits
+ returning 16 documents
+Query: label:armenia~2
+ found 21 hits
+ returning 21 documents
+Query: label:albania~2
+ found 17 hits
+ returning 17 documents
+Query: label:kuwait~2
+ found 5 hits
+ returning 5 documents
+Query: label:oman~2
+ found 69 hits
+ returning 69 documents
+Query: label:mongolia~2
+ found 10 hits
+ returning 10 documents
+Query: label:jamaica~2
+ found 4 hits
+ returning 4 documents
+Query: label:latvia~2
+ found 11 hits
+ returning 11 documents
+Query: label:namibia~2
+ found 9 hits
+ returning 9 documents
+Query: label:lesotho~2
+ found 1 hits
+ returning 1 documents
+Query: label:slovenia~2
+ found 15 hits
+ returning 15 documents
+Query: label:macedonia~2
+ found 10 hits
+ returning 10 documents
+Query: label:botswana~2
+ found 2 hits
+ returning 2 documents
+Query: label:gambia~2
+ found 8 hits
+ returning 8 documents
+Query: label:qatar~2
+ found 22 hits
+ returning 22 documents
+Query: label:guinea-bissau~2
+ found 0 hits
+ returning 0 documents
+Query: label:gabon~2
+ found 8 hits
+ returning 8 documents
+Query: label:trinidad label:tobago~2
+ found 5 hits
+ returning 5 documents
+Query: label:estonia~2
+ found 8 hits
+ returning 8 documents
+Query: label:mauritius~2
+ found 5 hits
+ returning 5 documents
+Query: label:swaziland~2
+ found 1 hits
+ returning 1 documents
+Query: label:east label:timor~2
+ found 26 hits
+ returning 26 documents
+Query: label:djibouti~2
+ found 1 hits
+ returning 1 documents
+Query: label:fiji~2
+ found 20 hits
+ returning 20 documents
+Query: label:bahrain~2
+ found 7 hits
+ returning 7 documents
+Query: label:cyprus~2
+ found 8 hits
+ returning 8 documents
+Query: label:guyana~2
+ found 10 hits
+ returning 10 documents
+Query: label:bhutan~2
+ found 6 hits
+ returning 6 documents
+Query: label:equatorial label:guinea~2
+ found 13 hits
+ returning 13 documents
+Query: label:comoros~2
+ found 2 hits
+ returning 2 documents
+Query: label:solomon label:islands~2
+ found 58 hits
+ returning 58 documents
+Query: label:suriname~2
+ found 4 hits
+ returning 4 documents
+Query: label:cape label:verde~2
+ found 12 hits
+ returning 12 documents
+Query: label:luxembourg~2
+ found 6 hits
+ returning 6 documents
+Query: label:malta~2
+ found 31 hits
+ returning 31 documents
+Query: label:brunei~2
+ found 5 hits
+ returning 5 documents
+Query: label:bahamas~2
+ found 2 hits
+ returning 2 documents
+Query: label:belize~2
+ found 2 hits
+ returning 2 documents
+Query: label:iceland~2
+ found 29 hits
+ returning 29 documents
+Query: label:maldives~2
+ found 1 hits
+ returning 1 documents
+Query: label:barbados~2
+ found 3 hits
+ returning 3 documents
+Query: label:vanuatu~2
+ found 1 hits
+ returning 1 documents
+Query: label:samoa~2
+ found 20 hits
+ returning 20 documents
+Query: label:saint label:lucia~2
+ found 24 hits
+ returning 24 documents
+Query: label:sao label:tome label:principe~2
+ found 18 hits
+ returning 18 documents
+Query: label:micronesia~2
+ found 1 hits
+ returning 1 documents
+Query: label:st label:vincent label:grenadines~2
+ found 8 hits
+ returning 8 documents
+Query: label:grenada~2
+ found 8 hits
+ returning 8 documents
+Query: label:tonga~2
+ found 40 hits
+ returning 40 documents
+Query: label:kiribati~2
+ found 2 hits
+ returning 2 documents
+Query: label:antigua label:barbuda~2
+ found 3 hits
+ returning 3 documents
+Query: label:seychelles~2
+ found 1 hits
+ returning 1 documents
+Query: label:andorra~2
+ found 1 hits
+ returning 1 documents
+Query: label:dominica~2
+ found 11 hits
+ returning 11 documents
+Query: label:marshall label:islands~2
+ found 58 hits
+ returning 58 documents
+Query: label:saint label:kitts label:nevis~2
+ found 20 hits
+ returning 20 documents
+Query: label:liechtenstein~2
+ found 1 hits
+ returning 1 documents
+Query: label:monaco~2
+ found 2 hits
+ returning 2 documents
+Query: label:san label:marino~2
+ found 13 hits
+ returning 13 documents
+Query: label:palau~2
+ found 17 hits
+ returning 17 documents
+Query: label:nauru~2
+ found 4 hits
+ returning 4 documents
+Query: label:tuvalu~2
+ found 4 hits
+ returning 4 documents
+Query: label:vatican label:city~2
+ found 18 hits
+ returning 18 documents
+Query: label:south label:sudan~2
+ found 69 hits
+ returning 69 documents
+Writing fastjoin_first.txt
+Writing fastjoin_second.txt
+Switching inputs as second one is larger than first one!
+Running ...
+C:/Users/Oliver/SkyDrive/dws/tools/fastjoin/win32/FastJoin.exe FJACCARD 0.8 0.3 fastjoin_second.txt fastjoin_first.txt 
+Signature Time      : 0.091s
+Candidate Time      : 0.064s
+Verification Time   : 0.005s
+Total Join Time     : 0.16s
+Candidates  Number  : 9691
+Result Number       : 461
+done -> 270
+159 instance correspondences
+prec: 0.9433962264150944 rec: 0.7772020725388601 f-mea: 0.8522727272727273
+instance matching ... done -> 4566
+label matching ... done -> 162
+class matching 1/2 ... done -> 1
+class matching 2/2 ... norm: 264.0
+done -> 1
+class prec: 1.0 rec: 1.0 f-mea: 1.0
+property matching 1/3 ... 
+property matching 1/3 ...  done -> 4566
+property matching 2/3 ... 
+norm: 159.0
+property matching 2/3 ... done -> 28
+property matching 3/3 ... done -> 162
+6 property correspondences
+Property prec: 0.8333333333333334 rec: 0.8333333333333334 f-mea: 0.8333333333333334
+candidate matching 1/4 ... done -> 4320
+candidate matching 2/4 ... done -> 161
+candidate matching 3/4 ... done -> 161
+candidate matching 4/4 ... done -> 161
+154 instance correspondences
+prec: 0.9805194805194806 rec: 0.7823834196891192 f-mea: 0.8703170028818444
+class matching 2/2 ... norm: 156.0
+done -> 1
+class prec: 1.0 rec: 1.0 f-mea: 1.0
+property matching 1/3 ... 
+property matching 1/3 ...  done -> 4566
+property matching 2/3 ... 
+norm: 193.0
+property matching 2/3 ... done -> 28
+property matching 3/3 ... done -> 162
+6 property correspondences
+Property prec: 0.8333333333333334 rec: 0.8333333333333334 f-mea: 0.8333333333333334
+candidate matching 1/4 ... done -> 4320
+candidate matching 2/4 ... done -> 161
+candidate matching 3/4 ... done -> 161
+candidate matching 4/4 ... done -> 161
+154 instance correspondences
+prec: 0.9805194805194806 rec: 0.7823834196891192 f-mea: 0.8703170028818444
+*************************************************
+Finished iterations
+*************************************************
+11688006_0_8123036130090004213 -> Country == CORRECT
+class prec: 1.0 rec: 1.0 f-mea: 1.0
+6 property correspondences
+null -> http://dbpedia.org/ontology/language == WRONG (should be null)
+population -> http://dbpedia.org/ontology/populationTotal == CORRECT
+area           (sq km) -> http://dbpedia.org/ontology/PopulatedPlace/area == CORRECT
+population density          (sq km) -> http://dbpedia.org/ontology/GeopoliticalOrganisation/populationDensity == CORRECT
+area           (sq mi) -> http://dbpedia.org/ontology/PopulatedPlace/area == CORRECT
+population density          (sq mi) -> http://dbpedia.org/ontology/GeopoliticalOrganisation/populationDensity == CORRECT
+Property prec: 0.8333333333333334 rec: 0.8333333333333334 f-mea: 0.8333333333333334
+154 instance correspondences
+china -> http://dbpedia.org/resource/China == CORRECT
+india -> http://dbpedia.org/resource/India == CORRECT
+united states of america -> http://dbpedia.org/resource/United_States == CORRECT
+indonesia -> http://dbpedia.org/resource/Indonesia == CORRECT
+brazil -> http://dbpedia.org/resource/Brazil == CORRECT
+pakistan -> http://dbpedia.org/resource/Pakistan == CORRECT
+bangladesh -> http://dbpedia.org/resource/Bangladesh == CORRECT
+nigeria -> http://dbpedia.org/resource/Nigeria == CORRECT
+russia -> http://dbpedia.org/resource/Russia == CORRECT
+japan -> http://dbpedia.org/resource/Japan == CORRECT
+mexico -> http://dbpedia.org/resource/Mexico == CORRECT
+germany -> http://dbpedia.org/resource/Germany == CORRECT
+egypt -> http://dbpedia.org/resource/Egypt == CORRECT
+turkey -> http://dbpedia.org/resource/Turkey == CORRECT
+france -> http://dbpedia.org/resource/France == CORRECT
+thailand -> http://dbpedia.org/resource/Thailand == CORRECT
+united kingdom (uk) -> http://dbpedia.org/resource/United_Kingdom == CORRECT
+italy -> http://dbpedia.org/resource/Italy == CORRECT
+south africa -> http://dbpedia.org/resource/South_Africa == CORRECT
+spain -> http://dbpedia.org/resource/Spain == CORRECT
+ukraine -> http://dbpedia.org/resource/Ukraine == CORRECT
+colombia -> http://dbpedia.org/resource/Colombia == CORRECT
+tanzania -> http://dbpedia.org/resource/Tanzania == CORRECT
+kenya -> http://dbpedia.org/resource/Kenya == CORRECT
+argentina -> http://dbpedia.org/resource/Argentina == CORRECT
+sudan -> http://dbpedia.org/resource/Sudan == CORRECT
+poland -> http://dbpedia.org/resource/Poland == CORRECT
+algeria -> http://dbpedia.org/resource/Algeria == CORRECT
+canada -> http://dbpedia.org/resource/Canada == CORRECT
+morocco -> http://dbpedia.org/resource/Morocco == CORRECT
+nepal -> http://dbpedia.org/resource/Nepal == CORRECT
+afghanistan -> http://dbpedia.org/resource/Afghanistan == CORRECT
+malaysia -> http://dbpedia.org/resource/Malaysia == CORRECT
+saudi arabia -> http://dbpedia.org/resource/Saudi_Arabia == CORRECT
+ghana -> http://dbpedia.org/resource/Ghana == CORRECT
+mozambique -> http://dbpedia.org/resource/Mozambique == CORRECT
+syria -> http://dbpedia.org/resource/Syria == CORRECT
+australia -> http://dbpedia.org/resource/Australia == CORRECT
+romania -> http://dbpedia.org/resource/Romania == CORRECT
+madagascar -> http://dbpedia.org/resource/Madagascar == CORRECT
+cameroon -> http://dbpedia.org/resource/Cameroon == CORRECT
+angola -> http://dbpedia.org/resource/Angola == CORRECT
+chile -> http://dbpedia.org/resource/Chile == CORRECT
+netherlands -> http://dbpedia.org/resource/Netherlands == CORRECT
+kazakhstan -> http://dbpedia.org/resource/Kazakhstan == CORRECT
+niger -> http://dbpedia.org/resource/Niger == CORRECT
+malawi -> http://dbpedia.org/resource/Malawi == CORRECT
+guatemala -> http://dbpedia.org/resource/Guatemala == CORRECT
+ecuador -> http://dbpedia.org/resource/Ecuador == CORRECT
+cambodia -> http://dbpedia.org/resource/Cambodia == CORRECT
+zambia -> http://dbpedia.org/resource/The_Gambia == WRONG (should be http://dbpedia.org/resource/Zambia)
+senegal -> http://dbpedia.org/resource/Senegal == CORRECT
+greece -> http://dbpedia.org/resource/Greece == CORRECT
+belgium -> http://dbpedia.org/resource/Belgium == CORRECT
+portugal -> http://dbpedia.org/resource/Portugal == CORRECT
+czech republic -> http://dbpedia.org/resource/Czech_Republic == CORRECT
+tunisia -> http://dbpedia.org/resource/Tunisia == CORRECT
+guinea -> http://dbpedia.org/resource/Guinea == CORRECT
+rwanda -> http://dbpedia.org/resource/Rwanda == CORRECT
+dominican republic -> http://dbpedia.org/resource/Dominican_Republic == CORRECT
+haiti -> http://dbpedia.org/resource/Haiti == CORRECT
+bolivia -> http://dbpedia.org/resource/Bolivia == CORRECT
+hungary -> http://dbpedia.org/resource/Hungary == CORRECT
+belarus -> http://dbpedia.org/resource/Belarus == CORRECT
+sweden -> http://dbpedia.org/resource/Sweden == CORRECT
+somalia -> http://dbpedia.org/resource/Somalia == CORRECT
+benin -> http://dbpedia.org/resource/Benin == CORRECT
+azerbaijan -> http://dbpedia.org/resource/Azerbaijan == CORRECT
+burundi -> http://dbpedia.org/resource/Burundi == CORRECT
+austria -> http://dbpedia.org/resource/Austria == CORRECT
+switzerland -> http://dbpedia.org/resource/Switzerland == CORRECT
+honduras -> http://dbpedia.org/resource/Honduras == CORRECT
+israel -> http://dbpedia.org/resource/Israel == CORRECT
+bulgaria -> http://dbpedia.org/resource/Bulgaria == CORRECT
+tajikstan -> http://dbpedia.org/resource/Tajikistan == CORRECT
+papua new guinea -> http://dbpedia.org/resource/Papua_New_Guinea == CORRECT
+libya -> http://dbpedia.org/resource/Libya == CORRECT
+jordan -> http://dbpedia.org/resource/Jordan == CORRECT
+paraguay -> http://dbpedia.org/resource/Paraguay == CORRECT
+sierra leone -> http://dbpedia.org/resource/Sierra_Leone == CORRECT
+nicaragua -> http://dbpedia.org/resource/Nicaragua == CORRECT
+kyrgyzstan -> http://dbpedia.org/resource/Kyrgyzstan == CORRECT
+denmark -> http://dbpedia.org/resource/Denmark == CORRECT
+slovakia -> http://dbpedia.org/resource/Slovakia == CORRECT
+finland -> http://dbpedia.org/resource/Finland == CORRECT
+eritrea -> http://dbpedia.org/resource/Eritrea == CORRECT
+turkmenistan -> http://dbpedia.org/resource/Turkmenistan == CORRECT
+singapore -> http://dbpedia.org/resource/Singapore == CORRECT
+norway -> http://dbpedia.org/resource/Norway == CORRECT
+united arab emirates -> http://dbpedia.org/resource/United_Arab_Emirates == CORRECT
+central african republic -> http://dbpedia.org/resource/Central_African_Republic == CORRECT
+ireland -> http://dbpedia.org/resource/Northern_Ireland == WRONG (should be http://dbpedia.org/resource/Republic_of_Ireland)
+georgia -> http://dbpedia.org/resource/Georgia_(country) == CORRECT
+croatia -> http://dbpedia.org/resource/Croatia == CORRECT
+lebanon -> http://dbpedia.org/resource/Lebanon == CORRECT
+bosnia & herzegovina -> http://dbpedia.org/resource/Bosnia_and_Herzegovina == CORRECT
+moldova -> http://dbpedia.org/resource/Moldova == CORRECT
+liberia -> http://dbpedia.org/resource/Liberia == CORRECT
+mauritania -> http://dbpedia.org/resource/Mauritania == CORRECT
+lithuania -> http://dbpedia.org/resource/Lithuania == CORRECT
+panama -> http://dbpedia.org/resource/Panama == CORRECT
+armenia -> http://dbpedia.org/resource/Armenia == CORRECT
+albania -> http://dbpedia.org/resource/Albania == CORRECT
+kuwait -> http://dbpedia.org/resource/Kuwait == CORRECT
+mongolia -> http://dbpedia.org/resource/Mongolia == CORRECT
+jamaica -> http://dbpedia.org/resource/Jamaica == CORRECT
+latvia -> http://dbpedia.org/resource/Latvia == CORRECT
+namibia -> http://dbpedia.org/resource/Namibia == CORRECT
+lesotho -> http://dbpedia.org/resource/Lesotho == CORRECT
+slovenia -> http://dbpedia.org/resource/Slovenia == CORRECT
+macedonia -> http://dbpedia.org/resource/Macedonia_(region) == WRONG (should be http://dbpedia.org/resource/Republic_of_Macedonia)
+botswana -> http://dbpedia.org/resource/Botswana == CORRECT
+gambia -> http://dbpedia.org/resource/The_Gambia == CORRECT
+qatar -> http://dbpedia.org/resource/Qatar == CORRECT
+guinea-bissau -> http://dbpedia.org/resource/Guinea-Bissau == CORRECT
+gabon -> http://dbpedia.org/resource/Gabon == CORRECT
+estonia -> http://dbpedia.org/resource/Estonia == CORRECT
+mauritius -> http://dbpedia.org/resource/Mauritius == CORRECT
+swaziland -> http://dbpedia.org/resource/Swaziland == CORRECT
+djibouti -> http://dbpedia.org/resource/Djibouti == CORRECT
+bahrain -> http://dbpedia.org/resource/Bahrain == CORRECT
+cyprus -> http://dbpedia.org/resource/Cyprus == CORRECT
+guyana -> http://dbpedia.org/resource/Guyana == CORRECT
+bhutan -> http://dbpedia.org/resource/Bhutan == CORRECT
+equatorial guinea -> http://dbpedia.org/resource/Equatorial_Guinea == CORRECT
+comoros -> http://dbpedia.org/resource/Comoros == CORRECT
+solomon islands -> http://dbpedia.org/resource/Solomon_Islands == CORRECT
+suriname -> http://dbpedia.org/resource/Suriname == CORRECT
+luxembourg -> http://dbpedia.org/resource/Luxembourg == CORRECT
+malta -> http://dbpedia.org/resource/Malta == CORRECT
+brunei -> http://dbpedia.org/resource/Brunei == CORRECT
+bahamas -> http://dbpedia.org/resource/The_Bahamas == CORRECT
+belize -> http://dbpedia.org/resource/Belize == CORRECT
+iceland -> http://dbpedia.org/resource/Iceland == CORRECT
+maldives -> http://dbpedia.org/resource/Maldives == CORRECT
+barbados -> http://dbpedia.org/resource/Barbados == CORRECT
+samoa -> http://dbpedia.org/resource/Samoa == CORRECT
+saint lucia -> http://dbpedia.org/resource/Saint_Lucia == CORRECT
+st. vincent & the grenadines -> http://dbpedia.org/resource/Saint_Vincent_and_the_Grenadines == CORRECT
+grenada -> http://dbpedia.org/resource/Grenada == CORRECT
+tonga -> http://dbpedia.org/resource/Tonga == CORRECT
+kiribati -> http://dbpedia.org/resource/Kiribati == CORRECT
+antigua & barbuda -> http://dbpedia.org/resource/Antigua_and_Barbuda == CORRECT
+seychelles -> http://dbpedia.org/resource/Seychelles == CORRECT
+andorra -> http://dbpedia.org/resource/Andorra == CORRECT
+dominica -> http://dbpedia.org/resource/Dominica == CORRECT
+marshall islands -> http://dbpedia.org/resource/Marshall_Islands == CORRECT
+saint kitts & nevis -> http://dbpedia.org/resource/Saint_Kitts_and_Nevis == CORRECT
+liechtenstein -> http://dbpedia.org/resource/Liechtenstein == CORRECT
+monaco -> http://dbpedia.org/resource/Monaco == CORRECT
+palau -> http://dbpedia.org/resource/Palau == CORRECT
+nauru -> http://dbpedia.org/resource/Nauru == CORRECT
+tuvalu -> http://dbpedia.org/resource/Tuvalu == CORRECT
+south sudan -> http://dbpedia.org/resource/South_Sudan == CORRECT
+prec: 0.9805194805194806 rec: 0.7823834196891192 f-mea: 0.8703170028818444

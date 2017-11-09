@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -35,6 +19,9 @@ public class Statistic {
     private double skewness;
     private double variance;
     private double averageValueLength;
+    private transient double distinctValuesWithoutLists;
+    private transient double lowerPercentile;
+    private transient double upperPercentile;
 
     /**
      * @return the minimalValue
@@ -160,6 +147,48 @@ public class Statistic {
      */
     public void setAverageValueLength(double averageValueLength) {
         this.averageValueLength = averageValueLength;
+    }
+
+    /**
+     * @return the lowerPercentile
+     */
+    public double getLowerPercentile() {
+        return lowerPercentile;
+    }
+
+    /**
+     * @param lowerPercentile the lowerPercentile to set
+     */
+    public void setLowerPercentile(double lowerPercentile) {
+        this.lowerPercentile = lowerPercentile;
+    }
+
+    /**
+     * @return the upperPercentile
+     */
+    public double getUpperPercentile() {
+        return upperPercentile;
+    }
+
+    /**
+     * @param upperPercentile the upperPercentile to set
+     */
+    public void setUpperPercentile(double upperPercentile) {
+        this.upperPercentile = upperPercentile;
+    }
+
+    /**
+     * @return the distinctValuesWithoutLists
+     */
+    public double getDistinctValuesWithoutLists() {
+        return distinctValuesWithoutLists;
+    }
+
+    /**
+     * @param distinctValuesWithoutLists the distinctValuesWithoutLists to set
+     */
+    public void setDistinctValuesWithoutLists(double distinctValuesWithoutLists) {
+        this.distinctValuesWithoutLists = distinctValuesWithoutLists;
     }
     
     

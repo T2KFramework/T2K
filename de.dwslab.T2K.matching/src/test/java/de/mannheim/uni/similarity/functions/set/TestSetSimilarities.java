@@ -1,26 +1,12 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.mannheim.uni.similarity.functions.set;
-
-import java.util.ArrayList;
-import java.util.Collection;
 
 import de.dwslab.T2K.similarity.functions.set.LeftSideCoverage;
 import de.dwslab.T2K.similarity.functions.set.MaxSimilarity;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+
+import de.dwslab.T2K.similarity.functions.IdentitySimilarity;
 import de.dwslab.T2K.similarity.functions.string.JaccardSimilarity;
 import de.dwslab.T2K.similarity.functions.string.LevenshteinSimilarity;
 import junit.framework.TestCase;
@@ -60,6 +46,29 @@ public class TestSetSimilarities extends TestCase {
         Double result = sim.calculate(col1, col2, new JaccardSimilarity());
         
         assertEquals(0.5, result);
+        
+        Collection<String> colEmpty = new ArrayList<String>();
+        result = sim.calculate(colEmpty, col2, new JaccardSimilarity());
+        
+        assertEquals(0.0, result);
+        
+        Collection<String> col3 = new ArrayList<>();
+        //col3.add(null);
+        col3.add("http://umbel.org/umbel/rc/HockeyTeam");
+        col3.add("http://umbel.org/umbel#RefConcept");
+        col3.add("http://www.w3.org/2002/07/owl#Class");
+        col3.add("http://www.w3.org/2002/07/owl#NamedIndividual");
+        //col3.add(null);
+        
+        result = sim.calculate(col3, colEmpty, new IdentitySimilarity<String>());
+        assertEquals(0.0, result);
+        
+        result = sim.calculate(col3, col3, new IdentitySimilarity<String>());
+        assertEquals(1.0, result);
+        
+        Collection<String> col4 = Arrays.asList("Cole\u00E7\u00E3o|Esquema de conceitos|Cole\u00E7\u00E3o Ordenada".split("\\|"));
+        result = sim.calculate(col4, col4, new IdentitySimilarity<String>());
+        assertEquals(1.0, result);
     }
     
 }

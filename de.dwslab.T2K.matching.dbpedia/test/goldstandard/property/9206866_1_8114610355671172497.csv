@@ -1,0 +1,5 @@
+"http://dbpedia.org/ontology/income","income"
+"http://dbpedia.org/ontology/populationTotal","population"
+"http://dbpedia.org/ontology/giniCoefficient","gni"
+"http://dbpedia.org/ontology/country","name"
+"http://dbpedia.org/ontology/circle","region"

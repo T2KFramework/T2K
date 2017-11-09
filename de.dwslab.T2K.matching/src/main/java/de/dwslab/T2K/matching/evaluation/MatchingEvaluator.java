@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.evaluation;
 
 import java.util.Collection;
@@ -21,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 
 import de.dwslab.T2K.matching.correspondences.Correspondence;
-
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -72,12 +56,15 @@ public class MatchingEvaluator {
         int matches = correspondences.size();
         int total = goldStandard.keySet().size();
 
+//        System.out.println("GS size evaluator: " +goldStandard.size());
+        
         HashSet<Object> mapped = new HashSet<Object>();        
         
         for (Correspondence<TCorrespondence> cor : correspondences) {
             List<Object> correctIds = goldStandard.get(firstAdapter.getUniqueIdentifier(cor.getFirst()));
-            //System.out.println("cor.getFirst: " + cor.getFirst());            
-            //System.out.println("cor.getFirst first Adapter: " + firstAdapter.getUniqueIdentifier(cor.getFirst()));
+                        
+//            System.out.println("cor.getFirst: " + cor.getFirst());            
+//            System.out.println("cor.getFirst first Adapter: " + firstAdapter.getUniqueIdentifier(cor.getFirst()));
 //            for(Object o : goldStandard.keySet()) {
 //                System.out.println("key: " + o + " velaue: " + goldStandard.get(o));
 //            }
@@ -86,14 +73,15 @@ public class MatchingEvaluator {
             
             Object actualId = null;
 
-            mapped.add(firstAdapter
-                    .getUniqueIdentifier(cor.getFirst()));
+            mapped.add(firstAdapter.getUniqueIdentifier(cor.getFirst()));
             
             if (cor.getSecond() != null) {
                 actualId = secondAdapter.getUniqueIdentifier(cor.getSecond());
             }
+            
 //            System.out.println("cor.getSecond: " + cor.getSecond());            
 //            System.out.println("cor.getSecond second Adapter: " + secondAdapter.getUniqueIdentifier(cor.getSecond()));
+//            System.out.println("correct IDS: " + correctIds);
 
             if (correctIds == null && actualId == null
                     || (correctIds != null && actualId != null && correctIds.contains(actualId))) {
@@ -124,6 +112,7 @@ public class MatchingEvaluator {
 
         if(isVerbose()) {
             for(Object key : goldStandard.keySet()) {
+                System.out.println("key!! " +key);
                 if(!mapped.contains(key)) {
                     System.out.println(key + " -> missing, should be " + goldStandard.get(key));
                 }

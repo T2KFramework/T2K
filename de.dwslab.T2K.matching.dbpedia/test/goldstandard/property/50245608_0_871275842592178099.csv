@@ -1,0 +1,5 @@
+"http://dbpedia.org/ontology/duration","length"
+"http://dbpedia.org/ontology/director","director"
+"http://dbpedia.org/ontology/releaseDate","year"
+"http://dbpedia.org/ontology/writer","writer"
+"http://dbpedia.org/ontology/originalTitle","title"

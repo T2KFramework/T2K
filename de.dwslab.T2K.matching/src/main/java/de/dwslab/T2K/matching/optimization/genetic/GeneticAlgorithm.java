@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
@@ -45,7 +29,7 @@ public class GeneticAlgorithm implements OptimizationAlgorithm {
     private int numberOfCrossovers = (int) Math.round(populationSize * rejectionRate);
     private double mutationRate = 0.1;
     private List<Individual> currentPopulation;
-    private double terminationCriterion = 0.001;
+    private double terminationCriterion = 0.01;
     private int individualCounter = 0;
     private ParameterRange ranges;
     private MatchingComponent m;
@@ -59,11 +43,22 @@ public class GeneticAlgorithm implements OptimizationAlgorithm {
         
         individualCounter = 0;
         currentPopulation = new ArrayList<>();
+        startPopulationSize =0;
         //http://annals-csis.org/proceedings/2013/pliks/167.pdf best values
         //for 3 variables with a population of 100 -> factor 33
-        //populationSize = m.getParameters().size()*33;
-        startPopulationSize = ranges.getRanges().size()*4;
-        populationSize = ranges.getRanges().size()*2;
+        //populationSize = m.getParameters().size()*33; 
+        int number =0;
+        for(Parameter p : ranges.getRanges().keySet()) {
+            int size = ranges.getRanges().get(p).size();
+            if(size>1) {
+                startPopulationSize++;
+                number += size;
+            }
+        }
+        //used for the large optis!
+        //startPopulationSize = number;
+        startPopulationSize = number*2;
+        populationSize = startPopulationSize/2;
         
         boolean hasValues = false;
         for (Parameter p : ranges.getRanges().keySet()) {
@@ -91,8 +86,8 @@ public class GeneticAlgorithm implements OptimizationAlgorithm {
             deleteWeakestStart();
             lastBest = -1.0;
             currentBest = currentPopulation.get(currentPopulation.size()-1).getScore();
-            while (true) {
-            //while (Math.abs(lastBest-currentBest)>terminationCriterion && individualCounter<300 && lastBest!=currentBest) {
+            //while (true) {
+            while (Math.abs(lastBest-currentBest)>terminationCriterion && individualCounter<300 && lastBest!=currentBest) {
                 lastBest = currentBest;
                 deleteWeakest();
                 crossover();
@@ -106,6 +101,7 @@ public class GeneticAlgorithm implements OptimizationAlgorithm {
         } else {
             return new Configuration(new HashMap<Parameter, Object>(), ranges.getAliases());
         }
+        return currentPopulation.get(currentPopulation.size()-1).getConfig();
     }
 
     /**

@@ -1,25 +1,10 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.similarity.functions.date;
 
 import java.util.Date;
 
 import de.dwslab.T2K.matching.ValueRange;
 import de.dwslab.T2K.similarity.functions.SimilarityFunction;
+import java.util.Calendar;
 
 public class WeightedDatePartSimilarity extends SimilarityFunction<Date> {
 
@@ -69,23 +54,37 @@ public class WeightedDatePartSimilarity extends SimilarityFunction<Date> {
     @Override
     public Double calculate(Date first, Date second) {
         
-        int days = Math.abs(first.getDate() - second.getDate());
-        int months = Math.abs(first.getMonth() - second.getMonth());
+        Calendar calFirst = Calendar.getInstance();
+        calFirst.setTime(first);
+        Calendar calSecond = Calendar.getInstance();
+        calSecond.setTime(second);
+        
+        //double reduction = 0.1;
+        if(calFirst.get(Calendar.DAY_OF_YEAR) == 1 || calSecond.get(Calendar.DAY_OF_YEAR) == 1) {
+            double yearSim = 1.0 - ((double)Math.abs(calFirst.get(Calendar.YEAR) - calSecond.get(Calendar.YEAR)) / (double)Math.abs(yearRange));
+            //double value = yearSim*getYearWeight();
+            //System.out.println("reduced value: " + value);
+            return yearSim;
+        }
+        
+        int days = Math.abs(calFirst.get(Calendar.DAY_OF_MONTH) - calSecond.get(Calendar.DAY_OF_MONTH));
+        int months = Math.abs(calFirst.get(Calendar.MONTH) - calSecond.get(Calendar.MONTH));
         
         double daySim = (31.0 - days) / 31.0;
         double monthSim = (12.0 - months) / 12.0;
         //double yearSim = new DeviationSimilarity().calculate((double)first.getYear()+1900, (double)second.getYear()+1900);
-        double yearSim = 1.0 - (double)Math.abs(first.getYear()-second.getYear()) / (double)yearRange;
+        double yearSim = 1.0 - ((double)Math.abs(calFirst.get(Calendar.YEAR) - calSecond.get(Calendar.YEAR)) / (double)Math.abs(yearRange));
         
-        if(yearSim!=1.0) {
-            yearSim *= 0.0;
-        }
+//        if(yearSim!=1.0) {
+//            yearSim *= 0.0;
+//        }
         
         daySim = getDayWeight()*daySim;
         monthSim = getMonthWeight()*monthSim;
         yearSim = getYearWeight()*yearSim;
-        
-        return daySim + monthSim + yearSim;
+        double value = daySim + monthSim + yearSim;
+        value = value/(getDayWeight()+getMonthWeight()+getYearWeight());
+        return value;
     }
 
 }

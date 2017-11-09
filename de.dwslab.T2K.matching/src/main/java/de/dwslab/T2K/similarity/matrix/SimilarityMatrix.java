@@ -1,28 +1,16 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.similarity.matrix;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 import de.dwslab.T2K.matching.MatchingAdapter;
+import de.dwslab.T2K.utils.data.Triple;
 
 /**
  * super class for all similarity matrices
@@ -85,7 +73,7 @@ public abstract class SimilarityMatrix<T> {
      */
     public abstract Collection<T> getMatchesAboveThreshold(T first,
             double similarityThreshold);
-
+    
     /**
      * Normalize all values in the matrix.
      * 
@@ -338,6 +326,46 @@ public abstract class SimilarityMatrix<T> {
         
     }
     
+    /**
+     * removes all elements below the given threshold
+     * @param belowThreshold
+     */
+    public void pruneWithNull(double belowThreshold) {
+        
+        for(T first : getFirstDimension()) {
+            
+            for(T second : getMatches(first)) {
+                
+                if(get(first, second)<belowThreshold) {
+                    set(first, second,null);
+                }
+                
+            }
+            
+        }
+        
+    }
+    
+    /**
+     * removes all elements below the given threshold
+     * @param belowThreshold
+     */
+    public void pruneWithNullEqualOrBelow(double belowThreshold) {
+        
+        for(T first : getFirstDimension()) {
+            
+            for(T second : getMatches(first)) {
+                
+                if(get(first, second)<=belowThreshold) {
+                    set(first, second,null);
+                }
+                
+            }
+            
+        }
+        
+    }
+    
     public int getNumberOfElements() {
         return getFirstDimension().size() * getSecondDimension().size();
     }
@@ -365,6 +393,16 @@ public abstract class SimilarityMatrix<T> {
         } else {
             return "";
         }
+    }
+    
+    private String name;
+    
+    public String getName() {
+        return this.name;
+    }
+    
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setLabel(T instance, Object label) {
@@ -560,6 +598,8 @@ public abstract class SimilarityMatrix<T> {
             }
         }
 
+        output += "\n";
+        
         if (labels.size() > 0) {
             // print second dimension labels
             output += padLeft("", columnWidths.get(0)) + " | ";
@@ -840,4 +880,27 @@ public abstract class SimilarityMatrix<T> {
         return d;
     }
     
+    public List<Triple<T, T, Double>> getPairsSortedDescending() {
+        List<Triple<T, T, Double>> triples = new LinkedList<>();
+        
+        for(T t : getFirstDimension()) {
+            
+            for(T t2 : getMatches(t)) {
+                
+                triples.add(new Triple<T, T, Double>(t, t2, get(t, t2)));
+                
+            }
+            
+        }
+        
+        Collections.sort(triples, new Comparator<Triple<T, T, Double>>() {
+
+            @Override
+            public int compare(Triple<T, T, Double> o1, Triple<T, T, Double> o2) {
+                return -Double.compare(o1.getThird(), o2.getThird());
+            }
+        });
+        
+        return triples;
+    }
 }

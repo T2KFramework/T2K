@@ -1,27 +1,11 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching;
 
 import java.util.Collection;
 
 import de.dwslab.T2K.matching.firstline.FastJoinMatcher;
+import de.dwslab.T2K.matching.firstline.FastJoinMatcher.FastJoinMeasure;
 import de.dwslab.T2K.matching.firstline.LabelBasedMatcher;
 import de.dwslab.T2K.matching.firstline.ValueBasedMatcher;
-import de.dwslab.T2K.matching.firstline.FastJoinMatcher.FastJoinMeasure;
 import de.dwslab.T2K.matching.secondline.Aggregate;
 import de.dwslab.T2K.matching.secondline.AggregationType;
 import de.dwslab.T2K.matching.secondline.BestChoiceMatching;
@@ -95,7 +79,6 @@ public class Matcher {
     }
     
     public static <T> SimilarityMatrix<T> addSimilarity(SimilarityMatrix<T> first, SimilarityMatrix<T> second) {
-        System.out.println("right method");
         Combine<T> c = new Combine<T>();
         c.setAggregationType(CombinationType.Sum);
         return c.match(first, second);

@@ -1,34 +1,32 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
 package de.dwslab.T2K.tableprocessor.statistics;
 
+import au.com.bytecode.opencsv.CSVParser;
+import au.com.bytecode.opencsv.CSVReader;
 import de.dwslab.T2K.tableprocessor.IO.TableReader;
 import de.dwslab.T2K.tableprocessor.model.Table;
-
+import de.dwslab.T2K.utils.concurrent.Consumer;
+import de.dwslab.T2K.utils.concurrent.Parallel;
+import de.dwslab.T2K.utils.timer.Timer;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -36,25 +34,50 @@ import java.io.UnsupportedEncodingException;
  */
 public class Statistics {
 
-    public static void main(String args[]) throws UnsupportedEncodingException, FileNotFoundException, IOException {
+    public static void main(String args[]) throws UnsupportedEncodingException, FileNotFoundException, IOException, Exception {
 
         String fileDir = args[0];
         File dir = new File(fileDir);
-        BufferedWriter write = new BufferedWriter(new FileWriter("sizes.csv"));
+        int counter = 0;
 
-        for (File f : dir.listFiles()) {
-            TableReader read = new TableReader();
-            Table t = read.readWebTable(f.getAbsolutePath());
-            int size;
-            if (t.getKey() == null) {
-                size = -1;
-            } else {
-                size = t.getKey().getValues().size();
+        final BufferedWriter write  = new BufferedWriter(new FileWriter("sizes.csv"));                       
+        
+        for (File fh : dir.listFiles()) {
+            if (fh.isDirectory()) {
+
+                Collection<File> files = Arrays.asList(fh.listFiles());
+
+                new Parallel<File>().foreach(files, new Consumer<File>() {
+                    
+                    @Override
+                    public void execute(File parameter) {
+                         
+                        try {
+                            
+                        CSVReader read = new CSVReader(new BufferedReader(new FileReader(parameter)));
+                        
+                        List<String[]> cont = read.readAll();
+
+                        if (cont.size() > 0) {
+                            synchronized(write) {
+                                write.write(parameter.getName() + ";" + cont.size() + ";" + cont.get(0).length + "\n");
+                            }
+                        }
+
+                        read.close();        
+                        
+                        } catch (FileNotFoundException ex) {
+                            Logger.getLogger(Statistics.class.getName()).log(Level.SEVERE, null, ex);
+                        } catch (IOException ex) {
+                            Logger.getLogger(Statistics.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    
+                }, new Timer("stats"), "finished");
+                write.flush();
             }
-
-            write.write(f.getName() + ";" + size + "\n");
         }
-        write.flush();
-        write.close();
+         write.close();
     }
+
 }

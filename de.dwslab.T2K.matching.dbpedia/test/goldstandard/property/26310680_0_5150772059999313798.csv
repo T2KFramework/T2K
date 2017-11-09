@@ -1,0 +1,4 @@
+"http://dbpedia.org/ontology/code","numeric code"
+"http://dbpedia.org/ontology/currencyCode","alphabetic code"
+"http://dbpedia.org/ontology/currency","currency"
+"http://dbpedia.org/ontology/commonName","entity"

@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.index.dbpedia;
 
 import java.io.File;
@@ -21,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 import org.apache.lucene.index.IndexWriter;
@@ -31,10 +17,9 @@ import com.esotericsoftware.kryo.io.Output;
 
 import de.dwslab.T2K.index.IIndex;
 import de.dwslab.T2K.index.io.DefaultIndex;
-import de.dwslab.T2K.index.io.StringNormaliser;
 import de.dwslab.T2K.tableprocessor.IO.TableReader;
 import de.dwslab.T2K.tableprocessor.model.Table;
-import de.dwslab.T2K.utils.data.string.StringCleaner;
+import de.uni_mannheim.informatik.dws.t2k.normalisation.StringNormalizer;
 
 public class DBpediaIndexer {
 
@@ -62,10 +47,10 @@ public class DBpediaIndexer {
     	            String label = t.getKey().getValues().get(i).toString();
                     
     	            // removes artifacts from the CSV format
-    	            String labelClean = StringCleaner.cleanString(label, false);
+    	            String labelClean = StringNormalizer.normaliseValue(label,false);
     	            
     	            // normalises the value to improve lookup results
-    	            label = StringNormaliser.normalise(labelClean, true);
+    	            label = StringNormalizer.normalise(labelClean, true);
     	                                
     	            //System.out.println(String.format("before: %s \t cleaned: %s \t after: %s", t.getKey().getValues().get(i).toString(), labelClean, label));
     	            
@@ -108,7 +93,8 @@ public class DBpediaIndexer {
             for(File f : new File(args[1]).listFiles()) {
                 try {
                     System.out.println(f.getName());
-                    Table t = r.readLODTable(f.getAbsolutePath());
+                    Table t = r.readKGTable(f.getAbsolutePath());
+                    //Table t = r.readLODTable(f.getAbsolutePath());
                     tables.add(t);
                     indexer.indexInstances(idx, t);
                 } catch (Exception e) {

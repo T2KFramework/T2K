@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.dbpedia.model;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -26,6 +10,9 @@ public class TableCell implements Comparable<TableCell> {
     private int rowIndex;
     private int columnIndex;
     private int hashCode;
+    
+    private Object value;
+    private Object type;
 
     public Table getTable() {
         return table;
@@ -57,15 +44,21 @@ public class TableCell implements Comparable<TableCell> {
         setColumnIndex(column);
         hashCode = new HashCodeBuilder().append(getTable().hashCode())
                 .append(getRowIndex()).append(getColumnIndex()).toHashCode();
+        
+        value = getTable().getColumns().get(getColumnIndex()).getValues()
+                .get(getRowIndex());
+        type = getTable().getColumns().get(getColumnIndex()).getDataType();
     }
 
     public Object getValue() {
-        return getTable().getColumns().get(getColumnIndex()).getValues()
-                .get(getRowIndex());
+//        return getTable().getColumns().get(getColumnIndex()).getValues()
+//                .get(getRowIndex());
+        return value;
     }
 
     public Object getType() {
-        return getTable().getColumns().get(getColumnIndex()).getDataType();
+        //return getTable().getColumns().get(getColumnIndex()).getDataType();
+        return type;
     }
 
     @Override
@@ -91,6 +84,18 @@ public class TableCell implements Comparable<TableCell> {
         if(o==null) {
             return -1;
         }
+        
+//        int comp = getTable().getHeader().compareTo(o.getTable().getHeader());
+//        
+//        if(comp==0) {
+//            comp = Integer.compare(getColumnIndex(),o.getColumnIndex());
+//            
+//            if(comp==0) {
+//                comp = Integer.compare(getRowIndex(), o.getRowIndex());
+//            }
+//        }
+//        
+//        return comp;
         
         String me = String.format("%s.%s.%s", getTable().getHeader(), getColumnIndex(), getRowIndex());
         String other = String.format("%s.%s.%s", o.getTable().getHeader(), o.getColumnIndex(), o.getRowIndex());

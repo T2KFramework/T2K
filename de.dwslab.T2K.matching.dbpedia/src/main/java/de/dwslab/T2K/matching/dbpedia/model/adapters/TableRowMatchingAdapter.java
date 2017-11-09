@@ -1,32 +1,24 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.dbpedia.model.adapters;
 
 import java.util.Collection;
 import java.util.List;
 
 import de.dwslab.T2K.matching.MatchingAdapter;
+import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.matching.dbpedia.model.TableRow;
+import de.dwslab.T2K.matching.dbpedia.model.adapters.context.StopWordRemover;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.apache.commons.lang.StringUtils;
 
 public class TableRowMatchingAdapter extends MatchingAdapter<TableRow> {
 
 	@Override
 	public Object getLabel(TableRow instance) {
-		return instance.getKey();
+		String key = instance.getKey().toString();
+                key = key.replace("&quot;", "");
+                key = key.replace("&quot;", "");                
+                return key;
 	}
 
 	@Override
@@ -47,5 +39,15 @@ public class TableRowMatchingAdapter extends MatchingAdapter<TableRow> {
 	public Object getType(TableRow instance) {
 		return instance.getTable().getHeader();
 	}
+
+    @Override
+    public Object getTokens(TableRow instance) {
+        List<String> tokens = new ArrayList<>();
+        for (TableCell tc : instance.getCells()) {
+            String[] cellContent = tc.getValue().toString().split("\\s");
+            tokens.addAll(Arrays.asList(cellContent));
+        }
+        return tokens;
+    }
 
 }

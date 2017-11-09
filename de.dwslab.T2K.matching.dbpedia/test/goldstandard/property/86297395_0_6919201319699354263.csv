@@ -1,0 +1,6 @@
+"http://dbpedia.org/ontology/governmentType","government"
+"http://dbpedia.org/ontology/grossDomesticProduct","gdp nominal (us$m)"
+"http://dbpedia.org/ontology/PopulatedPlace/area","land area"
+"http://dbpedia.org/ontology/perCapitaIncome","per capitagdp (us$)"
+"http://dbpedia.org/ontology/populationTotal","population"
+"http://dbpedia.org/ontology/country","country"

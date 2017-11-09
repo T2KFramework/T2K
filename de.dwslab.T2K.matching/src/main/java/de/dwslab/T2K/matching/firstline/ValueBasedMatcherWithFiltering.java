@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.firstline;
 
 import java.util.ArrayList;
@@ -23,6 +7,7 @@ import java.util.List;
 import de.dwslab.T2K.matching.MatchingAdapter;
 import de.dwslab.T2K.matching.MatchingHierarchyAdapater;
 import de.dwslab.T2K.matching.MatchingPair;
+import de.dwslab.T2K.matching.SimilarityCollector;
 import de.dwslab.T2K.matching.ValueRange;
 import de.dwslab.T2K.matching.blocking.Blocking;
 import de.dwslab.T2K.matching.blocking.IdentityBlocking;
@@ -30,6 +15,7 @@ import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
 import de.dwslab.T2K.utils.concurrent.Consumer;
 import de.dwslab.T2K.utils.concurrent.Parallel;
 import de.dwslab.T2K.utils.data.Pair;
+import de.dwslab.T2K.utils.data.Triple;
 import de.dwslab.T2K.utils.math.M;
 
 /**
@@ -61,6 +47,8 @@ public class ValueBasedMatcherWithFiltering<T, U> extends FirstLineMatcher<T> {
         return matchingLog;
     }
     
+//    private SimilarityCollector<U> collector;
+    
     /**
      * runs the matching on the provided instance sets for all instances in
      * instancesToMatch, candidate instances from candidates are selected by the
@@ -82,6 +70,9 @@ public class ValueBasedMatcherWithFiltering<T, U> extends FirstLineMatcher<T> {
 //        matchSingleThreaded(instancesToMatch, candidates, hierarchy,
 //                adapter, sim);
         
+//        collector = new SimilarityCollector<>();
+//        collector.startCollectingSimilarities(sim);
+        
         if (isCollectMatchingInfo() || !isRunInParallel()) {
             matchSingleThreaded(instancesToMatch, candidates, hierarchy,
                     adapter, sim);
@@ -92,10 +83,13 @@ public class ValueBasedMatcherWithFiltering<T, U> extends FirstLineMatcher<T> {
                         adapter, sim);
             } catch (Exception e) {
                 e.printStackTrace();
+//                collector.finishCollectingSimilarities();
                 return null;
             }
         }
 
+//        collector.finishCollectingSimilarities();
+        
         return sim;
     }
 
@@ -138,7 +132,7 @@ public class ValueBasedMatcherWithFiltering<T, U> extends FirstLineMatcher<T> {
         StringBuilder log = new StringBuilder();
         
         if(isCollectMatchingInfo()) {
-            log.append(String.format("Matching %s", instance));
+            log.append(String.format("\nMatching %s", instance));
         }
         
         // iterate over all candidates (all instances that could be
@@ -193,12 +187,20 @@ public class ValueBasedMatcherWithFiltering<T, U> extends FirstLineMatcher<T> {
                     }
                     
                     // only add if not null
-                    if (similarity != null) {
+                    //if (similarity != null) {
+                    if (similarity != null && similarity > getSimilarityThreshold()) {
                         synchronized (sim) {
-                            sim.setLabel(p.getFirst(), instance);
-                            sim.setLabel(p.getSecond(), candidate);
+                            if(isCollectMatchingInfo()) {
+                                sim.setLabel(p.getFirst(), instance);
+                                sim.setLabel(p.getSecond(), candidate);
+                            }
                             sim.set(p.getFirst(), p.getSecond(), similarity);
                         }
+//                        if(isCollectMatchingInfo()) {
+//                            collector.queueLabel(new Pair<>(p.getFirst(), (Object)instance));
+//                            collector.queueLabel(new Pair<>(p.getSecond(), (Object)candidate));
+//                        }
+//                        collector.queueSimilarity(new Triple<>(p.getFirst(), p.getSecond(), similarity));
                     }
                 }
             }

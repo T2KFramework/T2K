@@ -1,19 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.dbpedia.model;
 
 import java.util.Collection;
@@ -58,7 +42,15 @@ public class TableRow implements Comparable<TableRow> {
     }
 
     public Object getKey() {
-        return getTable().getKey().getValues().get(getRowIndex());
+        if(getTable().getKey()!=null) {
+            return getTable().getKey().getValues().get(getRowIndex());
+        } else {
+            return null;
+        }
+    }
+    
+    public void setKey(Object o) {
+        getTable().getKey().getValues().put(getRowIndex(), o);
     }
 
     public TableCell getKeyCell() {
@@ -118,17 +110,29 @@ public class TableRow implements Comparable<TableRow> {
 
     @Override
     public String toString() {
-        return "" + getKey();
+        return String.format("[%d] %s", getRowIndex(), getKey());
     }
 
     public Object getURI() {
         return getTable().getColumns().get(0).getValues().get(getRowIndex());
     }
-
+    
+    public Object getWikiID() {
+        return getTable().getColumns().get(getTable().getWikiIDCol()).getValues().get(getRowIndex());
+    }
+    
+    @Override
     public int compareTo(TableRow o) {
         
-        String me = getTable().getHeader() + getKey() + "";
-        String other = o.getTable().getHeader() + o.getKey() + "";
+//        int comp = getTable().getHeader().compareTo(o.getTable().getHeader());
+//        
+//        if(comp==0) {
+//            comp = Integer.compare(rowIndex, o.getRowIndex());
+//        }
+//        
+//        return comp;
+        String me = getTable().getHeader() + getKey() + "" + getRowIndex();
+        String other = o.getTable().getHeader() + o.getKey() + ""+ o.getRowIndex();
         
         return me.compareTo(other);
     }

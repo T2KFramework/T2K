@@ -1,33 +1,17 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of
-							Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.matching.dbpedia.matchers.instance;
 
 import de.dwslab.T2K.matching.Matcher;
+import de.dwslab.T2K.matching.dbpedia.algorithm.PartialMatcher;
 import de.dwslab.T2K.matching.dbpedia.logging.MatchingLogger;
-import de.dwslab.T2K.matching.dbpedia.matchers.PartialMatcher;
+import de.dwslab.T2K.matching.dbpedia.model.GoldStandard;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingData;
+import de.dwslab.T2K.matching.dbpedia.model.MatchingParameters;
+import de.dwslab.T2K.matching.dbpedia.model.Similarities;
 import de.dwslab.T2K.matching.dbpedia.model.TableCell;
 import de.dwslab.T2K.matching.dbpedia.model.TableRow;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableColumnToCellHierarchyAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableRowToCellHierarchyAdapter;
 import de.dwslab.T2K.matching.dbpedia.model.adapters.TableRowUriMatchingAdapter;
-import de.dwslab.T2K.matching.dbpedia.model.settings.GoldStandard;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingData;
-import de.dwslab.T2K.matching.dbpedia.model.settings.MatchingParameters;
-import de.dwslab.T2K.matching.dbpedia.model.settings.Similarities;
 import de.dwslab.T2K.matching.secondline.Aggregate;
 import de.dwslab.T2K.matching.secondline.AggregationType;
 import de.dwslab.T2K.similarity.matrix.SimilarityMatrix;
@@ -124,10 +108,6 @@ public class PruningInstanceMatcher extends PartialMatcher<TableRow> {
         
 //        candSim.prune(getMatchingParameters().getInstanceScoreThreshold());
         candSim.prune(getSimilarityThreshold());
-
-        //TODO we could try a 1:1 mapping here ...
-
-        //getSimilarities().setCandidateSimilarity(candSim);
         
         if (getMatchingParameters().isCollectMatchingInfo()) {
             System.out.println(candSim.getOutput(null, getGoldStandard().getInstanceGoldStandard().values(), new TableRowUriMatchingAdapter(), null));

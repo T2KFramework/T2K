@@ -1,0 +1,5 @@
+"http://dbpedia.org/ontology/commonName","name"
+"http://dbpedia.org/ontology/foundingDate","date"
+"http://dbpedia.org/ontology/governmentType","government"
+"http://dbpedia.org/ontology/language","languages"
+"http://dbpedia.org/ontology/capital","capital"

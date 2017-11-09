@@ -1,0 +1,9 @@
+http://dbpedia.org/ontology/area	http://dbpedia.org/ontology/PopulatedPlace/area	http://dbpedia.org/ontology/areaTotal	http://dbpedia.org/ontology/PopulatedPlace/areaTotal
+http://dbpedia.org/ontology/populationDensity	http://dbpedia.org/ontology/GeopoliticalOrganisation/populationDensity	http://dbpedia.org/ontology/PopulatedPlace/populationDensity
+http://dbpedia.org/ontology/leaderName	http://dbpedia.org/ontology/mayor	http://dbpedia.org/ontology/leader
+http://dbpedia.org/ontology/publisher	http://dbpedia.org/ontology/developer	http://dbpedia.org/ontology/manufacturer
+http://dbpedia.org/ontology/genre	http://dbpedia.org/ontology/category
+http://dbpedia.org/ontology/country	http://dbpedia.org/ontology/location	http://dbpedia.org/ontology/locationCountry	http://dbpedia.org/ontology/collectionSize
+http://dbpedia.org/ontology/industry	http://dbpedia.org/ontology/product
+http://dbpedia.org/ontology/foundedBy	http://dbpedia.org/ontology/founder
+http://dbpedia.org/ontology/Work/runtime	http://dbpedia.org/ontology/duration

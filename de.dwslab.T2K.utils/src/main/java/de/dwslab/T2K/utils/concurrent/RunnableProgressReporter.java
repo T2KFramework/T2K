@@ -1,25 +1,11 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.utils.concurrent;
 
 import java.util.Map.Entry;
+import java.util.Stack;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import org.apache.commons.lang.time.DurationFormatUtils;
-//import org.apache.log4j.Logger;
+import org.apache.log4j.Logger;
 
 public class RunnableProgressReporter
 	implements Runnable
@@ -29,13 +15,14 @@ public class RunnableProgressReporter
 	private Thread thread;
 	private Task userTask;
 	private boolean stop;
-	//private Logger logger;
+	private Logger logger;
 	private String message;
+	private boolean reportIfStuck = true;
 	
 	public RunnableProgressReporter()
 	{
 		
-		//logger = Logger.getLogger(RunnableProgressReporter.class);
+		logger = Logger.getLogger(RunnableProgressReporter.class);
 	}
 	
 	public Task getUserTask() {
@@ -61,6 +48,14 @@ public class RunnableProgressReporter
 	public void setPool(ThreadPoolExecutor pool) {
 		this.pool = pool;
 	}
+	
+	public void setReportIfStuck(boolean reportIfStuck) {
+        this.reportIfStuck = reportIfStuck;
+    }
+	
+	public boolean getReportIfStuck() {
+        return reportIfStuck;
+    }
 	
 	public void run() {
 		try
@@ -100,7 +95,7 @@ public class RunnableProgressReporter
 					//logger.info(usrMsg + done + " of " + tasks + " tasks completed after " + ttl + " (" + pool.getActiveCount() + "/" + pool.getPoolSize() + " active threads). " + each + " per item, " + remaining + " left.");
 					//System.err.println(usrMsg + done + " of " + tasks + " tasks completed after " + ttl + " (" + pool.getActiveCount() + "/" + pool.getPoolSize() + " active threads). " + each + " per item, " + remaining + " left.");
 					//System.err.println(String.format("%s%,d of %,d tasks completed after %s (%d/%d active threads). %s per item, %s left.", usrMsg, done, tasks, ttl, pool.getActiveCount(), pool.getPoolSize(), each, remaining));
-					System.err.println(String.format("%s%,d of %,d tasks completed after %s (%d/%d active threads). Avg: %.4f items/s, Current: %.4f items/s, %s left.", usrMsg, done, tasks, ttl, pool.getActiveCount(), pool.getPoolSize(), itemsPerSecAvg, itemsPerSecNow, remaining));
+					System.err.println(String.format("%s%,d of %,d tasks completed after %s (%d/%d active threads). Avg: %.2f items/s, Current: %.2f items/s, %s left.", usrMsg, done, tasks, ttl, pool.getActiveCount(), pool.getPoolSize(), itemsPerSecAvg, itemsPerSecNow, remaining));
 	
 					if(userTask!=null)
 						userTask.execute();
@@ -112,7 +107,7 @@ public class RunnableProgressReporter
 					    stuckIterations=0;
 					}
 					
-					if(stuckIterations>=3) {
+					if(stuckIterations>=3 && reportIfStuck) {
 					    System.err.println("ThreadPool seems to be stuck!");
 					    int threadCnt = 0;
 					    for(Entry<Thread, StackTraceElement[]> e : Thread.getAllStackTraces().entrySet()) {
@@ -135,6 +130,7 @@ public class RunnableProgressReporter
 		}
 		catch(Exception e)
 		{
+		    e.printStackTrace();
 		}
 	}
 	

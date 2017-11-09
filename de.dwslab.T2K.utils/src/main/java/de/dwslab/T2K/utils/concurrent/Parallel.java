@@ -1,18 +1,3 @@
-/**
- * Copyright (C) 2015 T2K-Team, Data and Web Science Group, University of Mannheim (t2k@dwslab.de)
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *         http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package de.dwslab.T2K.utils.concurrent;
 
 import java.util.HashMap;
@@ -31,8 +16,25 @@ import java.util.concurrent.TimeUnit;
 import de.dwslab.T2K.utils.query.Func;
 import de.dwslab.T2K.utils.query.Q;
 import de.dwslab.T2K.utils.timer.Timer;
+import java.util.ArrayList;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 public class Parallel<T> {
+
+    /**
+     * @return the defaultExecutor
+     */
+    public static ThreadPoolExecutor getDefaultExecutor() {
+        return defaultExecutor;
+    }
+
+    /**
+     * @param aDefaultExecutor the defaultExecutor to set
+     */
+    public static void setDefaultExecutor(ThreadPoolExecutor aDefaultExecutor) {
+        defaultExecutor = aDefaultExecutor;
+    }
 
 	public interface ITask
 	{
@@ -46,6 +48,11 @@ public class Parallel<T> {
 	private static Parallel<?> currentTask = null;
 	private static Map<ITask, Thread> runningTasks = new ConcurrentHashMap<ITask, Thread>();
 	private static ThreadPoolExecutor defaultExecutor;
+	
+	private boolean reportIfStuck = true;
+	public void setReportIfStuck(boolean reportIfStuck) {
+        this.reportIfStuck = reportIfStuck;
+    }
 	
 	public static void setDefaultQueueSize(int size)
 	{
@@ -72,23 +79,23 @@ public class Parallel<T> {
 	public static ThreadPoolExecutor getExecutor(int numProcessors) {
 		if(numProcessors==defaultNumProcessors)
 		{
-			if(defaultExecutor==null)
+			if(getDefaultExecutor()==null)
 			{
-				defaultExecutor = new ThreadPoolExecutor(
-						defaultNumProcessors, 
-						defaultNumProcessors, 
-						0,
-						TimeUnit.SECONDS,
-						new LinkedBlockingQueue<Runnable>(getDefaultQueueSize()), 
-						new ThreadFactory() {
-							
-							public Thread newThread(Runnable r) {
-								return new Thread(r, "Parallel.x thread");
-							}
-						});
+				setDefaultExecutor(new ThreadPoolExecutor(
+                                                 defaultNumProcessors, 
+                                                 defaultNumProcessors, 
+                                                 0,
+                                                 TimeUnit.SECONDS,
+                                                 new LinkedBlockingQueue<Runnable>(getDefaultQueueSize()), 
+                                                 new ThreadFactory() {
+                                                         
+                                                         public Thread newThread(Runnable r) {
+                                                                 return new Thread(r, "Parallel.x thread");
+                                                         }
+                                                 }));
 			}
 			
-			return defaultExecutor;
+			return getDefaultExecutor();
 		}
 		else
 		{
@@ -244,10 +251,12 @@ public class Parallel<T> {
     		{
     			final T value = it.next();
     			
-    			Runnable r = new ExtendedRunnable() {
-    				
+    			Runnable r = new ExtendedRunnable() {    				
     				public void run() {
+//                                    running = true;
+//                                    start = System.currentTimeMillis();
     				    try {
+                                        
     				        // try to execute the task for the current item
     				        body.execute(value);
     				    } catch(Exception e) {
@@ -255,7 +264,7 @@ public class Parallel<T> {
     				        e.printStackTrace();
     				        
     				        this.setException(e);
-    				        
+                                            				        
     				        synchronized (failedTasks) {
                                 Integer cnt = failedTasks.get(this);
                                 
@@ -282,26 +291,60 @@ public class Parallel<T> {
     					
     				}
     			};
-    			
-    			pool.execute(r);
+//    			Future<?> future = pool.submit(r);
+//                        futures.put(r,future);                            
+                        pool.execute(r);
     		}
     		
     		RunnableProgressReporter p = new RunnableProgressReporter();
     		p.setPool(pool);
     		p.setMessage(message);
-    		p.setUserTask(new Task() {
-				
-				@Override
-				public void execute() {
-					System.err.println(timerToReport.toString());
-				}
-			});
+    		p.setReportIfStuck(reportIfStuck);
+    		if(timerToReport!=null) {
+        		p.setUserTask(new Task() {
+    				
+    				@Override
+    				public void execute() {
+    					System.err.println(timerToReport.toString());
+    				}
+    			});
+    		}
     		p.start();
-    		
+                                
     		do {
-    		    
-    		} while(pool.getQueue().size()>0 && pool.getActiveCount()>0);
-    		
+//                    for(Runnable r : pool.getQueue()) {                        
+//                        ExtendedRunnable er = (ExtendedRunnable)r;
+//                        if(er.running) {
+//                            if(System.currentTimeMillis()-er.start>60000) {
+//                                System.out.println("HUIII  TOO LONG");
+//                                futures.get(r).cancel(true);
+//                                pool.remove(r);
+//                                pool.purge();
+//                            }
+//                        }
+//                    }
+//                    Thread.sleep(30000);
+//                    for(Future f : futures.keySet()) {
+//                        if(f.isDone()) {
+//                            remove.add(f);
+//                        }
+//                        try {
+//                            f.get(20, TimeUnit.SECONDS);
+//                        }catch(Exception e) {
+//                            System.out.println("TIMEOUT!!!");
+//                            remove.add(f);
+//                            f.cancel(true);
+//                            pool.purge();
+//                            pool.remove(futures.get(f));
+//                        }
+//                    }
+//                    for(Future f : remove) {
+//                        System.out.println("remove");
+//                        futures.remove(f);
+//                    }
+//    		    pool.purge();
+                } while(pool.getQueue().size()>0 && pool.getActiveCount()>0);
+                
     		pool.shutdown();
     		
     		pool.awaitTermination(1, TimeUnit.DAYS);
@@ -367,22 +410,26 @@ public class Parallel<T> {
     			rpr.start();
     		
     		// start the producer thread
-    		Thread p = run(new Task() {
-    			
-    			@Override
-    			public void execute() {
-    				//Timer tp = new Timer("Producer", tim);
-    				producer.execute();
-    				//tp.stop();
-    			}
-    		});
+    		ITask producerTask = new Task() {
+                
+                @Override
+                public void execute() {
+                    //Timer tp = new Timer("Producer", tim);
+                    producer.execute();
+                    //tp.stop();
+                }
+    		};
+    		
+    		run(producerTask);
     		
     		// wait for the producer thread to finish
-    		try {
-    			p.join();
-    		} catch (InterruptedException e) {
-    			e.printStackTrace();
-    		}
+    		join(producerTask);
+//    		try {
+//    			//p.join();
+//    		    
+//    		} catch (InterruptedException e) {
+//    			e.printStackTrace();
+//    		}
     		
     		//if(isOuter)
     			//System.out.println("Producer finished.");
@@ -428,10 +475,21 @@ public class Parallel<T> {
 		try {
 			Thread t = runningTasks.get(task);
 			t.join();
+			runningTasks.remove(task);
 			return true;
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	public static boolean cancel(ITask task) {
+	    if(!runningTasks.containsKey(task))
+            return false;
+	    
+        Thread t = runningTasks.get(task);
+        t.interrupt();
+        runningTasks.remove(task);
+        return true;
 	}
 }
